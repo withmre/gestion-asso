@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookOpen, CheckCircle, AlertTriangle, Search, Trash2, Zap } from 'lucide-react';
-import type { EcritureComptable, Transaction, Person } from '@/types';
+import type { EcritureComptable, Transaction } from '@/types';
 
 const COMPTES_PCA: Record<string, string> = {
   '101': 'Fonds associatifs',
@@ -50,7 +50,6 @@ const JOURNAUX: Record<string, string> = {
 interface ComptabiliteDoubleProps {
   ecritures: EcritureComptable[];
   transactions: Transaction[];
-  persons: Person[];
   onDelete: (id: string) => void;
   onGenererDepuisTransactions: () => void;
 }
@@ -58,7 +57,6 @@ interface ComptabiliteDoubleProps {
 export function ComptabiliteDouble({
   ecritures,
   transactions,
-  persons,
   onDelete,
   onGenererDepuisTransactions,
 }: ComptabiliteDoubleProps) {
