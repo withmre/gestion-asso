@@ -107,13 +107,13 @@ function App() {
     getTransactionsByPeriod,
     getTransactionsByYear,
     ecritures,
-    addEcriture,
     deleteEcriture,
-    genererEcritureDepuisTransaction,
     evenementsPrev,
     addEvenementPrev,
     deleteEvenementPrev,
     kpisCustom,
+    addEcriture,
+    genererEcritureDepuisTransaction,
     calculateScoreSante,
     calculateProjectionTresorerie,
     sessionsMentorat,
@@ -409,6 +409,27 @@ function App() {
     </div>
   );
 
+  const handleGenererEcritures = () => {
+    const txsSansEcriture = transactions.filter(
+      tx => !ecritures.some(e => e.transactionId === tx.id)
+    );
+    txsSansEcriture.forEach(tx => {
+      const lignes = genererEcritureDepuisTransaction(tx);
+      if (lignes.length > 0) {
+        const journal: 'VTE' | 'ACH' | 'BNQ' | 'CAI' | 'OD' =
+          tx.type === 'depense' ? 'ACH' : tx.type === 'adhesion' ? 'BNQ' : 'VTE';
+        addEcriture({
+          date: tx.date,
+          libelle: tx.description || tx.type,
+          lignes,
+          transactionId: tx.id,
+          journalCode: journal,
+        });
+      }
+    });
+    toast.success('Ecritures comptables generees');
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Toaster position="top-right" richColors />
@@ -665,7 +686,6 @@ function App() {
             <ComptabiliteDouble
               ecritures={ecritures}
               transactions={transactions}
-              persons={persons}
               onDelete={deleteEcriture}
               onGenererDepuisTransactions={handleGenererEcritures}
             />
