@@ -8,7 +8,7 @@ import {
   PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis,
   CartesianGrid, Tooltip as RechartsTooltip, Legend, LineChart, Line
 } from 'recharts';
-import { Users, TrendingUp, DollarSign, HelpCircle, TrendingDown, Wallet, Trophy, FileText, Plus, Pencil, Trash2, Check, X } from 'lucide-react';
+import { Users, TrendingUp, DollarSign, HelpCircle, TrendingDown, Wallet, Trophy, FileText } from 'lucide-react';
 
 interface DashboardProps {
   kpiPersonnes: KPIPersonnes;
