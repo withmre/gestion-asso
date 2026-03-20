@@ -1,78 +1,64 @@
-# Gestion Associative V3
+# Gestion Associative — Outil de pilotage
 
 Application web de gestion comptable et analytique pour association.
-100% statique — aucun serveur requis. Hebergeable sur GitHub Pages.
+100% statique, hébergeable sur GitHub Pages, aucun serveur requis.
 
-## Installation
+## Fonctionnalités
 
-```bash
-npm install
-npm run dev        # Developpement local
-npm run build      # Generer le dossier dist/
-```
+- Gestion des membres (adhérents, membres, Discord)
+- Comptabilité complète (adhésions, dons, ventes, dépenses)
+- Comptabilité en partie double (journal, balance)
+- Bilan comptable (actif/passif, amortissements)
+- Subventions et financements (suivi des dossiers)
+- CTF & compétitions
+- Partenaires & sponsors
+- Suivi du mentorat (sessions, binômes, thématiques)
+- KPIs personnalisés (constructeur de formules)
+- Dashboard analytique (score de santé, projection de trésorerie)
+- Générateur de certificats PDF (adhésion, CTF, mentorat)
+- Visuels pour les réseaux sociaux (Instagram, LinkedIn, Story)
+- Import HelloAsso (CSV) et Discord (JSON)
+- Export Excel mensuel et annuel
+- Chiffrement AES-256-GCM des exports
+- Compression ZIP / GZ des exports
+- Versioning automatique des sauvegardes
+- Mode sombre
+- Verrouillage par code PIN
+- Onboarding guidé
 
-## Deploiement sur GitHub Pages
+## Déploiement sur GitHub Pages
 
 ### 1. Configurer la base URL
 
-Ouvrez `vite.config.ts` et remplacez `NOM_DU_REPO` par le nom exact de votre depot GitHub :
+Ouvrez `vite.config.ts` et remplacez `NOM_DU_REPO` par le nom de votre dépôt :
 
 ```ts
-base: '/nom-de-votre-repo/',
+base: '/votre-repo/',
 ```
 
-Si vous utilisez un domaine custom ou un repo `username.github.io`, mettez :
-```ts
-base: '/',
-```
+### 2. Pousser sur GitHub
 
-### 2. Build et deploiement manuel
+Uploadez tous les fichiers dans un dépôt public GitHub,
+puis activez GitHub Pages dans Settings → Pages → Branch: `gh-pages`.
+
+Le workflow `.github/workflows/deploy.yml` s'occupe du build et du déploiement
+automatiquement à chaque push sur `main`.
+
+## Développement local
 
 ```bash
-npm run build
+npm install
+npm run dev
 ```
 
-Puis poussez le contenu du dossier `dist/` sur la branche `gh-pages` :
+## Données
 
-```bash
-# Installer gh-pages une fois
-npm install -g gh-pages
+Toutes les données sont stockées dans le `localStorage` de votre navigateur.
+**Exportez régulièrement** depuis Paramètres → Sauvegarde des données.
 
-# Deployer
-gh-pages -d dist
-```
+## Licence
 
-### 3. Via GitHub Actions (automatique)
+CC BY-NC-ND 4.0 — Utilisation personnelle et associative libre.
+Usage commercial et redistribution du code interdits.
 
-Creez `.github/workflows/deploy.yml` :
-
-```yaml
-name: Deploy to GitHub Pages
-on:
-  push:
-    branches: [main]
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm install
-      - run: npm run build
-      - uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-```
-
-Puis dans les Settings de votre repo GitHub :
-- Pages > Source > Deploy from a branch > gh-pages
-
-## Donnees
-
-Toutes les donnees sont stockees dans le localStorage de votre navigateur.
-**Pensez a exporter regulierement vos donnees** depuis la page Parametres.
-
-Développé et pensé pour des besoins spécifiques, peut ne pas convenir à tout usage.
+© 2025 withmre

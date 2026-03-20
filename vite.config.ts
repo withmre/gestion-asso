@@ -6,7 +6,7 @@ import { defineConfig } from "vite"
 // Exemple : si votre repo s'appelle "gestion-asso", mettez base: '/gestion-asso/'
 // Si vous utilisez un domaine custom ou un repo en username.github.io, mettez base: '/'
 export default defineConfig({
-  base: '/gestion-asso/',
+  base: '/NOM_DU_REPO/',
   plugins: [react()],
   resolve: {
     alias: {
