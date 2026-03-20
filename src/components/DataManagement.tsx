@@ -129,7 +129,7 @@ export function DataManagement({
               type="url"
               value={params.siteWeb || ''}
               onChange={(e) => onUpdateParams({ siteWeb: e.target.value })}
-              placeholder="https:
+              placeholder="https://exemple.fr"
               className="border-gray-300"
             />
           </div>
@@ -155,7 +155,7 @@ export function DataManagement({
               type="url"
               value={params.logoUrl || ''}
               onChange={(e) => onUpdateParams({ logoUrl: e.target.value })}
-              placeholder="https:
+              placeholder="https://exemple.fr"
               className="border-gray-300"
             />
             {params.logoUrl && (
