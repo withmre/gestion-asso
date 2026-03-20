@@ -32,24 +32,6 @@ const THEMES_COULEURS = [
   { id: 'clair',   label: 'Clair professionnel', fond: '#F8FAFC', accent: '#1E3A5F', texte: '#1F2937' },
 ];
 
-function wrapText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number) {
-  const words = text.split(' ');
-  let line = '';
-  let currentY = y;
-  for (const word of words) {
-    const testLine = line + word + ' ';
-    const metrics = ctx.measureText(testLine);
-    if (metrics.width > maxWidth && line !== '') {
-      ctx.fillText(line.trim(), x, currentY);
-      line = word + ' ';
-      currentY += lineHeight;
-    } else {
-      line = testLine;
-    }
-  }
-  ctx.fillText(line.trim(), x, currentY);
-  return currentY + lineHeight;
-}
 
 function dessinerFond(ctx: CanvasRenderingContext2D, w: number, h: number, fond: string, accent: string) {
   ctx.fillStyle = fond;
@@ -88,7 +70,7 @@ function dessinerFond(ctx: CanvasRenderingContext2D, w: number, h: number, fond:
   ctx.fillRect(0, h - 6, w, 6);
 }
 
-function dessinerLogo(ctx: CanvasRenderingContext2D, nom: string, x: number, y: number, accent: string, texte: string) {
+function dessinerLogo(ctx: CanvasRenderingContext2D, nom: string, x: number, y: number, accent: string, _texte: string) {
   ctx.font = `bold 22px sans-serif`;
   ctx.fillStyle = accent;
   ctx.textAlign = 'left';
@@ -187,7 +169,6 @@ export function VisuelsRS({ kpiFinances, kpiPersonnes, ctfEvents, scoreSante, pa
       ctx.fillText(moisLabel.toUpperCase(), cx, h * 0.24);
 
       const top = kpiPersonnes.top5MembresActifs.slice(0, 3);
-      const medailles = ['🥇', '🥈', '🥉'];
       const startY = h * 0.32;
       const espacement = h * 0.14;
 
