@@ -186,12 +186,12 @@ export function PartenairesPage({ partenaires, onAdd, onUpdate, onDelete }: Part
 
                     <div className="space-y-2">
                       <Label>Site web</Label>
-                      <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https:
+                      <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://exemple.fr"
                     </div>
 
                     <div className="space-y-2">
                       <Label>URL du logo</Label>
-                      <Input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https:
+                      <Input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://exemple.fr"
                     </div>
 
                     <div className="border-t pt-4">
