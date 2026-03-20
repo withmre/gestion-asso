@@ -141,7 +141,7 @@ export function DataManagement({ params, onUpdateParams, onExportJSON, onImportJ
     if (file.name.endsWith('.zip')) {
       const zip = await JSZip.loadAsync(file);
       const fichierJSON = Object.values(zip.files).find(f => f.name.endsWith('.json'));
-      if (!fichierJSON) throw new Error('Aucun fichier JSON trouvé dans l'archive ZIP.');
+      if (!fichierJSON) throw new Error('Aucun fichier JSON trouve dans l archive ZIP.');
       return await fichierJSON.async('string');
     } else if (file.name.endsWith('.gz')) {
       const buffer = await file.arrayBuffer();
