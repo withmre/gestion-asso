@@ -222,15 +222,15 @@ export function HelloAssoImport({ persons, onImport }: HelloAssoImportProps) {
 
   return (
     <>
-      <Card className="border border-gray-200 shadow-sm">
-        <CardHeader className="bg-gray-50 border-b border-gray-200">
+      <Card className="border border-border shadow-sm">
+        <CardHeader className="bg-muted/50 border-b border-border">
           <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
             <Users className="h-5 w-5" />
             Importer depuis HelloAsso
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-6 space-y-4">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             Uploadez un fichier CSV exporte depuis HelloAsso. Les doublons sont
             detectes par adresse email. Une confirmation sera demandee avant de
             modifier les profils existants.
@@ -248,7 +248,7 @@ export function HelloAssoImport({ persons, onImport }: HelloAssoImportProps) {
             onClick={() => fileInputRef.current?.click()}
             disabled={isParsing}
             variant="outline"
-            className="w-full border-gray-300 text-gray-700 hover:bg-gray-50"
+            className="w-full border-border text-foreground hover:bg-muted/50"
           >
             <Upload className="h-4 w-4 mr-2" />
             {isParsing ? 'Analyse en cours...' : 'Selectionner un fichier CSV'}
@@ -278,11 +278,11 @@ export function HelloAssoImport({ persons, onImport }: HelloAssoImportProps) {
       <Dialog open={!!pendingImport} onOpenChange={(open) => { if (!open) handleCancel(); }}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-gray-900">
+            <DialogTitle className="flex items-center gap-2 text-foreground">
               <AlertTriangle className="h-5 w-5 text-amber-500" />
               Confirmation de mise a jour
             </DialogTitle>
-            <DialogDescription className="text-gray-600">
+            <DialogDescription className="text-muted-foreground">
               {pendingImport && (
                 <>
                   {pendingImport.toCreate.length > 0 && (
@@ -307,28 +307,28 @@ export function HelloAssoImport({ persons, onImport }: HelloAssoImportProps) {
               {updatesWithChanges.map(({ existing, changes }) => (
                 <div
                   key={existing.id}
-                  className="border border-gray-200 rounded-lg overflow-hidden"
+                  className="border border-border rounded-lg overflow-hidden"
                 >
                   {/* En-tete membre */}
-                  <div className="bg-gray-50 px-4 py-2 flex items-center gap-2 border-b border-gray-200">
-                    <Users className="h-4 w-4 text-gray-500" />
-                    <span className="font-medium text-gray-900 text-sm">
+                  <div className="bg-muted/50 px-4 py-2 flex items-center gap-2 border-b border-border">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium text-foreground text-sm">
                       {existing.prenom} {existing.nom}
                     </span>
-                    <span className="text-xs text-gray-500">{existing.email}</span>
+                    <span className="text-xs text-muted-foreground">{existing.email}</span>
                   </div>
 
                   {/* Tableau des changements */}
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-gray-50 border-b border-gray-100">
-                        <th className="text-left px-4 py-1.5 text-xs font-medium text-gray-500 w-1/3">
+                      <tr className="bg-muted/50 border-b border-gray-100">
+                        <th className="text-left px-4 py-1.5 text-xs font-medium text-muted-foreground w-1/3">
                           Champ
                         </th>
-                        <th className="text-left px-4 py-1.5 text-xs font-medium text-gray-500 w-1/3">
+                        <th className="text-left px-4 py-1.5 text-xs font-medium text-muted-foreground w-1/3">
                           Valeur actuelle
                         </th>
-                        <th className="text-left px-4 py-1.5 text-xs font-medium text-gray-500 w-1/3">
+                        <th className="text-left px-4 py-1.5 text-xs font-medium text-muted-foreground w-1/3">
                           Nouvelle valeur
                         </th>
                       </tr>
@@ -337,12 +337,12 @@ export function HelloAssoImport({ persons, onImport }: HelloAssoImportProps) {
                       {changes.map((change, i) => (
                         <tr
                           key={i}
-                          className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+                          className={i % 2 === 0 ? 'bg-card' : 'bg-muted/50'}
                         >
-                          <td className="px-4 py-2 text-gray-600 font-medium">
+                          <td className="px-4 py-2 text-muted-foreground font-medium">
                             {change.champ}
                           </td>
-                          <td className="px-4 py-2 text-gray-400 line-through">
+                          <td className="px-4 py-2 text-muted-foreground/60 line-through">
                             {change.ancien}
                           </td>
                           <td className="px-4 py-2 text-[#4A7C59] font-medium">
@@ -359,7 +359,7 @@ export function HelloAssoImport({ persons, onImport }: HelloAssoImportProps) {
 
           {/* Membres sans changement (juste mis a jour silencieusement) */}
           {pendingImport && pendingImport.toUpdate.length > updatesWithChanges.length && (
-            <p className="text-xs text-gray-400 mt-2">
+            <p className="text-xs text-muted-foreground/60 mt-2">
               {pendingImport.toUpdate.length - updatesWithChanges.length} membre
               {pendingImport.toUpdate.length - updatesWithChanges.length > 1 ? 's' : ''}{' '}
               deja a jour (aucun changement detecte).
@@ -367,11 +367,11 @@ export function HelloAssoImport({ persons, onImport }: HelloAssoImportProps) {
           )}
 
           {/* Boutons */}
-          <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
+          <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-border">
             <Button
               variant="outline"
               onClick={handleCancel}
-              className="border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="border-border text-foreground hover:bg-muted/50"
             >
               Annuler
             </Button>

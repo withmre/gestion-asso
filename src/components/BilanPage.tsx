@@ -148,40 +148,40 @@ export function BilanPage({
 
       {/* KPIs principaux */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border border-gray-200 shadow-sm">
+        <Card className="border border-border shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Total Actif</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Actif</CardTitle>
             <Building2 className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{formatCurrency(kpiBilan.totalActif)}</div>
+            <div className="text-2xl font-bold text-foreground">{formatCurrency(kpiBilan.totalActif)}</div>
           </CardContent>
         </Card>
-        <Card className="border border-gray-200 shadow-sm">
+        <Card className="border border-border shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Total Passif</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Passif</CardTitle>
             <TrendingDown className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{formatCurrency(kpiBilan.totalPassif)}</div>
+            <div className="text-2xl font-bold text-foreground">{formatCurrency(kpiBilan.totalPassif)}</div>
           </CardContent>
         </Card>
-        <Card className="border border-gray-200 shadow-sm">
+        <Card className="border border-border shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Capitaux Propres</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Capitaux Propres</CardTitle>
             <Calculator className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{formatCurrency(kpiBilan.capitauxPropres)}</div>
+            <div className="text-2xl font-bold text-foreground">{formatCurrency(kpiBilan.capitauxPropres)}</div>
           </CardContent>
         </Card>
-        <Card className="border border-gray-200 shadow-sm">
+        <Card className="border border-border shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Tresorerie</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Tresorerie</CardTitle>
             <Wallet className="h-4 w-4 text-amber-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{formatCurrency(kpiBilan.tresorerie)}</div>
+            <div className="text-2xl font-bold text-foreground">{formatCurrency(kpiBilan.tresorerie)}</div>
           </CardContent>
         </Card>
       </div>
@@ -189,23 +189,23 @@ export function BilanPage({
       {/* KPIs immobilisations */}
       {actifsByType.immobilisation.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card className="border border-gray-200 shadow-sm">
+          <Card className="border border-border shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Immobilisations (valeur brute)</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Immobilisations (valeur brute)</CardTitle>
               <Building2 className="h-4 w-4 text-slate-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-500">{formatCurrency(kpiBilan.valeurImmobilisations)}</div>
+              <div className="text-2xl font-bold text-muted-foreground">{formatCurrency(kpiBilan.valeurImmobilisations)}</div>
             </CardContent>
           </Card>
-          <Card className="border border-gray-200 shadow-sm">
+          <Card className="border border-border shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Immobilisations (valeur nette)</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Immobilisations (valeur nette)</CardTitle>
               <Building2 className="h-4 w-4 text-[#1E3A5F]" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-[#1E3A5F]">{formatCurrency(kpiBilan.valeurNetteImmobilisations)}</div>
-              <p className="text-xs text-gray-500 mt-1">Apres deduction des amortissements</p>
+              <p className="text-xs text-muted-foreground mt-1">Apres deduction des amortissements</p>
             </CardContent>
           </Card>
         </div>
@@ -226,8 +226,8 @@ export function BilanPage({
 
         {/* Actif */}
         <TabsContent value="actif" className="space-y-6 mt-6">
-          <Card className="border border-gray-200 shadow-sm">
-            <CardHeader className="bg-gray-50 border-b border-gray-200">
+          <Card className="border border-border shadow-sm">
+            <CardHeader className="bg-muted/50 border-b border-border">
               <CardTitle className="text-lg font-semibold text-gray-800">Ajouter un actif</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
@@ -235,7 +235,7 @@ export function BilanPage({
                 <div className="space-y-1.5">
                   <Label>Type d&apos;actif</Label>
                   <Select value={actifType} onValueChange={(v) => setActifType(v as ActifType)}>
-                    <SelectTrigger className="border-gray-300"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="border-border"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="immobilisation">Immobilisation</SelectItem>
                       <SelectItem value="stock">Stock</SelectItem>
@@ -245,31 +245,31 @@ export function BilanPage({
                 </div>
                 <div className="space-y-1.5">
                   <Label>Nom</Label>
-                  <Input value={actifNom} onChange={(e) => setActifNom(e.target.value)} placeholder="Ex : Ordinateur portable" className="border-gray-300" />
+                  <Input value={actifNom} onChange={(e) => setActifNom(e.target.value)} placeholder="Ex : Ordinateur portable" className="border-border" />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Valeur unitaire (EUR)</Label>
-                  <Input type="number" step="0.01" min="0" value={actifValeur} onChange={(e) => setActifValeur(e.target.value)} placeholder="0.00" className="border-gray-300" />
+                  <Input type="number" step="0.01" min="0" value={actifValeur} onChange={(e) => setActifValeur(e.target.value)} placeholder="0.00" className="border-border" />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
                 <div className="space-y-1.5">
                   <Label>Quantite (optionnel)</Label>
-                  <Input type="number" min="1" value={actifQuantite} onChange={(e) => setActifQuantite(e.target.value)} placeholder="1" className="border-gray-300" />
+                  <Input type="number" min="1" value={actifQuantite} onChange={(e) => setActifQuantite(e.target.value)} placeholder="1" className="border-border" />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Date d&apos;acquisition</Label>
-                  <Input type="date" value={actifDate} onChange={(e) => setActifDate(e.target.value)} className="border-gray-300" />
+                  <Input type="date" value={actifDate} onChange={(e) => setActifDate(e.target.value)} className="border-border" />
                 </div>
                 {actifType === 'immobilisation' && (
                   <div className="space-y-1.5">
                     <Label>Duree amortissement (annees)</Label>
-                    <Input type="number" min="1" max="50" value={actifDureeAmort} onChange={(e) => setActifDureeAmort(e.target.value)} placeholder="Ex : 3" className="border-gray-300" />
+                    <Input type="number" min="1" max="50" value={actifDureeAmort} onChange={(e) => setActifDureeAmort(e.target.value)} placeholder="Ex : 3" className="border-border" />
                   </div>
                 )}
                 <div className="space-y-1.5">
                   <Label>Description (optionnel)</Label>
-                  <Input value={actifDescription} onChange={(e) => setActifDescription(e.target.value)} placeholder="Description..." className="border-gray-300" />
+                  <Input value={actifDescription} onChange={(e) => setActifDescription(e.target.value)} placeholder="Description..." className="border-border" />
                 </div>
               </div>
               <Button onClick={handleAddActif} className="mt-4 bg-[#1E3A5F] hover:bg-[#16294a] text-white">
@@ -281,8 +281,8 @@ export function BilanPage({
 
           {(Object.keys(actifsByType) as ActifType[]).map((type) =>
             actifsByType[type].length > 0 ? (
-              <Card key={type} className="border border-gray-200 shadow-sm">
-                <CardHeader className="bg-gray-50 border-b border-gray-200">
+              <Card key={type} className="border border-border shadow-sm">
+                <CardHeader className="bg-muted/50 border-b border-border">
                   <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                     {(() => { const Icon = actifTypeIcons[type]; return <Icon className="h-5 w-5" />; })()}
                     {actifTypeLabels[type]}
@@ -292,25 +292,25 @@ export function BilanPage({
                 <CardContent className="p-0">
                   <Table>
                     <TableHeader>
-                      <TableRow className="bg-gray-50 hover:bg-gray-50">
-                        <TableHead className="text-gray-700 font-medium">Nom</TableHead>
-                        <TableHead className="text-gray-700 font-medium">Description</TableHead>
+                      <TableRow className="bg-muted/50 hover:bg-muted/50">
+                        <TableHead className="text-foreground font-medium">Nom</TableHead>
+                        <TableHead className="text-foreground font-medium">Description</TableHead>
                         {type === 'immobilisation' && (
-                          <TableHead className="text-right text-gray-700 font-medium">Valeur brute</TableHead>
+                          <TableHead className="text-right text-foreground font-medium">Valeur brute</TableHead>
                         )}
-                        <TableHead className="text-right text-gray-700 font-medium">
+                        <TableHead className="text-right text-foreground font-medium">
                           {type === 'immobilisation' ? 'Valeur nette' : 'Valeur'}
                         </TableHead>
-                        <TableHead className="text-right text-gray-700 font-medium">Actions</TableHead>
+                        <TableHead className="text-right text-foreground font-medium">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {actifsByType[type].map((actif, index) => {
                         const amort = calcAmortissement(actif);
                         return (
-                          <TableRow key={actif.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                          <TableRow key={actif.id} className={index % 2 === 0 ? 'bg-card' : 'bg-muted/50'}>
                             <TableCell>
-                              <div className="font-medium text-gray-900">{actif.nom}</div>
+                              <div className="font-medium text-foreground">{actif.nom}</div>
                               {amort && (
                                 <div className="mt-2 space-y-1">
                                   <div className="flex items-center gap-2">
@@ -320,12 +320,12 @@ export function BilanPage({
                                         style={{ width: `${amort.tauxAmortissement}%` }}
                                       />
                                     </div>
-                                    <span className="text-xs text-gray-500 whitespace-nowrap">{amort.tauxAmortissement}%</span>
+                                    <span className="text-xs text-muted-foreground whitespace-nowrap">{amort.tauxAmortissement}%</span>
                                   </div>
                                   {amort.estAmorti ? (
                                     <span className="inline-block bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded font-medium">Amorti</span>
                                   ) : actif.dureeAmortissement ? (
-                                    <span className="text-xs text-gray-400">
+                                    <span className="text-xs text-muted-foreground/60">
                                       Sur {actif.dureeAmortissement} an{actif.dureeAmortissement > 1 ? 's' : ''}
                                       {actif.dateAcquisition && ` - acquis le ${new Date(actif.dateAcquisition).toLocaleDateString('fr-FR')}`}
                                     </span>
@@ -333,16 +333,16 @@ export function BilanPage({
                                 </div>
                               )}
                             </TableCell>
-                            <TableCell className="text-sm text-gray-600">
+                            <TableCell className="text-sm text-muted-foreground">
                               {actif.description}
                               {actif.quantite && actif.quantite > 1 && (
-                                <span className="text-gray-400"> ({actif.quantite} x {formatCurrency(actif.valeurUnitaire || 0)})</span>
+                                <span className="text-muted-foreground/60"> ({actif.quantite} x {formatCurrency(actif.valeurUnitaire || 0)})</span>
                               )}
                             </TableCell>
                             {type === 'immobilisation' && (
-                              <TableCell className="text-right text-sm text-gray-400">{formatCurrency(actif.valeur)}</TableCell>
+                              <TableCell className="text-right text-sm text-muted-foreground/60">{formatCurrency(actif.valeur)}</TableCell>
                             )}
-                            <TableCell className="text-right font-medium text-gray-900">
+                            <TableCell className="text-right font-medium text-foreground">
                               {formatCurrency(type === 'immobilisation' && amort ? amort.valeurNette : actif.valeur)}
                             </TableCell>
                             <TableCell className="text-right">
@@ -363,28 +363,28 @@ export function BilanPage({
 
         {/* Passif */}
         <TabsContent value="passif" className="space-y-6 mt-6">
-          <Card className="border border-gray-200 shadow-sm">
-            <CardHeader className="bg-gray-50 border-b border-gray-200">
+          <Card className="border border-border shadow-sm">
+            <CardHeader className="bg-muted/50 border-b border-border">
               <CardTitle className="text-lg font-semibold text-gray-800">Ajouter une dette</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
                   <Label>Nom de la dette</Label>
-                  <Input value={passifNom} onChange={(e) => setPassifNom(e.target.value)} placeholder="Ex : Facture fournisseur" className="border-gray-300" />
+                  <Input value={passifNom} onChange={(e) => setPassifNom(e.target.value)} placeholder="Ex : Facture fournisseur" className="border-border" />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Montant (EUR)</Label>
-                  <Input type="number" step="0.01" min="0" value={passifMontant} onChange={(e) => setPassifMontant(e.target.value)} placeholder="0.00" className="border-gray-300" />
+                  <Input type="number" step="0.01" min="0" value={passifMontant} onChange={(e) => setPassifMontant(e.target.value)} placeholder="0.00" className="border-border" />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Date d&apos;echeance</Label>
-                  <Input type="date" value={passifDateEcheance} onChange={(e) => setPassifDateEcheance(e.target.value)} className="border-gray-300" />
+                  <Input type="date" value={passifDateEcheance} onChange={(e) => setPassifDateEcheance(e.target.value)} className="border-border" />
                 </div>
               </div>
               <div className="mt-4">
                 <Label>Description (optionnel)</Label>
-                <Input value={passifDescription} onChange={(e) => setPassifDescription(e.target.value)} placeholder="Description de la dette..." className="mt-1.5 border-gray-300" />
+                <Input value={passifDescription} onChange={(e) => setPassifDescription(e.target.value)} placeholder="Description de la dette..." className="mt-1.5 border-border" />
               </div>
               <Button onClick={handleAddPassif} className="mt-4 bg-red-700 hover:bg-red-800 text-white">
                 <Plus className="h-4 w-4 mr-2" />
@@ -394,27 +394,27 @@ export function BilanPage({
           </Card>
 
           {passifs.length > 0 && (
-            <Card className="border border-gray-200 shadow-sm">
-              <CardHeader className="bg-gray-50 border-b border-gray-200">
+            <Card className="border border-border shadow-sm">
+              <CardHeader className="bg-muted/50 border-b border-border">
                 <CardTitle className="text-lg font-semibold text-gray-800">Dettes enregistrees</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-gray-50 hover:bg-gray-50">
-                      <TableHead className="text-gray-700 font-medium">Nom</TableHead>
-                      <TableHead className="text-gray-700 font-medium">Description</TableHead>
-                      <TableHead className="text-gray-700 font-medium">Echeance</TableHead>
-                      <TableHead className="text-right text-gray-700 font-medium">Montant</TableHead>
-                      <TableHead className="text-center text-gray-700 font-medium">Statut</TableHead>
-                      <TableHead className="text-right text-gray-700 font-medium">Actions</TableHead>
+                    <TableRow className="bg-muted/50 hover:bg-muted/50">
+                      <TableHead className="text-foreground font-medium">Nom</TableHead>
+                      <TableHead className="text-foreground font-medium">Description</TableHead>
+                      <TableHead className="text-foreground font-medium">Echeance</TableHead>
+                      <TableHead className="text-right text-foreground font-medium">Montant</TableHead>
+                      <TableHead className="text-center text-foreground font-medium">Statut</TableHead>
+                      <TableHead className="text-right text-foreground font-medium">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {passifs.map((passif, index) => (
-                      <TableRow key={passif.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} ${passif.estPaye ? 'opacity-60' : ''}`}>
+                      <TableRow key={passif.id} className={`${index % 2 === 0 ? 'bg-card' : 'bg-muted/50'} ${passif.estPaye ? 'opacity-60' : ''}`}>
                         <TableCell className="font-medium">{passif.nom}</TableCell>
-                        <TableCell className="text-sm text-gray-600">{passif.description}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">{passif.description}</TableCell>
                         <TableCell className="text-sm">
                           {passif.dateEcheance ? new Date(passif.dateEcheance).toLocaleDateString('fr-FR') : '-'}
                         </TableCell>

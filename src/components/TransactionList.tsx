@@ -88,7 +88,7 @@ export function TransactionList({ transactions, persons, onDelete, onEdit }: Tra
 
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) return <span className="text-gray-300 ml-1">↕</span>;
-    return <span className="text-slate-700 ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>;
+    return <span className="text-primary ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>;
   };
 
   const formatCurrency = (value: number) =>
@@ -99,8 +99,8 @@ export function TransactionList({ transactions, persons, onDelete, onEdit }: Tra
   const solde = totalRecettes - totalDepenses;
 
   return (
-    <Card className="border border-gray-200 shadow-sm">
-      <CardHeader className="bg-gray-50 border-b border-gray-200">
+    <Card className="border border-border shadow-sm">
+      <CardHeader className="bg-muted/50 border-b border-border">
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
@@ -125,18 +125,18 @@ export function TransactionList({ transactions, persons, onDelete, onEdit }: Tra
 
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
               <Input
                 placeholder="Rechercher..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 border-gray-300"
+                className="pl-9 border-border"
               />
             </div>
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value as TransactionType | 'all')}
-              className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
+              className="px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <option value="all">Tous les types</option>
               <option value="adhesion">Adhésions</option>
@@ -151,33 +151,33 @@ export function TransactionList({ transactions, persons, onDelete, onEdit }: Tra
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-gray-50 hover:bg-gray-50">
-                <TableHead className="cursor-pointer text-gray-700 font-medium" onClick={() => handleSort('date')}>
+              <TableRow className="bg-muted/50 hover:bg-muted/50">
+                <TableHead className="cursor-pointer text-foreground font-medium" onClick={() => handleSort('date')}>
                   Date <SortIcon field="date" />
                 </TableHead>
-                <TableHead className="cursor-pointer text-gray-700 font-medium" onClick={() => handleSort('type')}>
+                <TableHead className="cursor-pointer text-foreground font-medium" onClick={() => handleSort('type')}>
                   Type <SortIcon field="type" />
                 </TableHead>
-                <TableHead className="cursor-pointer text-gray-700 font-medium text-right" onClick={() => handleSort('montant')}>
+                <TableHead className="cursor-pointer text-foreground font-medium text-right" onClick={() => handleSort('montant')}>
                   Montant <SortIcon field="montant" />
                 </TableHead>
-                <TableHead className="cursor-pointer text-gray-700 font-medium" onClick={() => handleSort('person')}>
+                <TableHead className="cursor-pointer text-foreground font-medium" onClick={() => handleSort('person')}>
                   Personne <SortIcon field="person" />
                 </TableHead>
-                <TableHead className="text-gray-700 font-medium">Détails</TableHead>
-                <TableHead className="text-right text-gray-700 font-medium">Actions</TableHead>
+                <TableHead className="text-foreground font-medium">Détails</TableHead>
+                <TableHead className="text-right text-foreground font-medium">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filtered.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                     Aucune transaction trouvée
                   </TableCell>
                 </TableRow>
               ) : (
                 filtered.map((transaction, index) => (
-                  <TableRow key={transaction.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                  <TableRow key={transaction.id} className={index % 2 === 0 ? 'bg-card' : 'bg-muted/50'}>
                     <TableCell className="text-sm">
                       {new Date(transaction.date).toLocaleDateString('fr-FR')}
                     </TableCell>
@@ -186,10 +186,10 @@ export function TransactionList({ transactions, persons, onDelete, onEdit }: Tra
                         {typeLabels[transaction.type]}
                       </span>
                       {transaction.venteSousCategorie && (
-                        <span className="ml-2 text-xs text-gray-500">({venteLabels[transaction.venteSousCategorie]})</span>
+                        <span className="ml-2 text-xs text-muted-foreground">({venteLabels[transaction.venteSousCategorie]})</span>
                       )}
                       {transaction.depenseCategorie && (
-                        <span className="ml-2 text-xs text-gray-500">({depenseLabels[transaction.depenseCategorie]})</span>
+                        <span className="ml-2 text-xs text-muted-foreground">({depenseLabels[transaction.depenseCategorie]})</span>
                       )}
                     </TableCell>
                     <TableCell className={`text-right font-medium ${transaction.type === 'depense' ? 'text-red-600' : 'text-green-600'}`}>
@@ -198,10 +198,10 @@ export function TransactionList({ transactions, persons, onDelete, onEdit }: Tra
                     <TableCell className="text-sm">
                       {transaction.type === 'depense' ? '-' : getPersonName(transaction.personId)}
                     </TableCell>
-                    <TableCell className="text-sm text-gray-600 max-w-xs truncate">
+                    <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
                       {transaction.description}
                       {transaction.dateDebutAdhesion && (
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-muted-foreground">
                           Du {new Date(transaction.dateDebutAdhesion).toLocaleDateString('fr-FR')}
                           {transaction.dateFinAdhesion && ` au ${new Date(transaction.dateFinAdhesion).toLocaleDateString('fr-FR')}`}
                         </div>
@@ -213,7 +213,7 @@ export function TransactionList({ transactions, persons, onDelete, onEdit }: Tra
                           variant="ghost"
                           size="sm"
                           onClick={() => onEdit(transaction)}
-                          className="text-gray-500 hover:text-[#1E3A5F] hover:bg-blue-50"
+                          className="text-muted-foreground hover:text-[#1E3A5F] hover:bg-blue-50"
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>

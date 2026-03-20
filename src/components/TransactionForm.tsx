@@ -94,7 +94,7 @@ export function TransactionForm({ persons, onSubmit }: TransactionFormProps) {
     <>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="montant" className="text-gray-700">Montant (€) *</Label>
+          <Label htmlFor="montant" className="text-foreground">Montant (€) *</Label>
           <Input
             id="montant"
             type="number"
@@ -103,18 +103,18 @@ export function TransactionForm({ persons, onSubmit }: TransactionFormProps) {
             value={montant}
             onChange={(e) => setMontant(e.target.value)}
             placeholder="0.00"
-            className="border-gray-300"
+            className="border-border"
             required
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="date" className="text-gray-700">Date *</Label>
+          <Label htmlFor="date" className="text-foreground">Date *</Label>
           <Input
             id="date"
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="border-gray-300"
+            className="border-border"
             required
           />
         </div>
@@ -122,9 +122,9 @@ export function TransactionForm({ persons, onSubmit }: TransactionFormProps) {
 
       {activeTab !== 'depense' && (
         <div className="space-y-2">
-          <Label htmlFor="person" className="text-gray-700">Personne associée</Label>
+          <Label htmlFor="person" className="text-foreground">Personne associée</Label>
           <Select value={personId} onValueChange={setPersonId}>
-            <SelectTrigger className="border-gray-300">
+            <SelectTrigger className="border-border">
               <SelectValue placeholder="Sélectionner une personne (optionnel)" />
             </SelectTrigger>
             <SelectContent>
@@ -140,21 +140,21 @@ export function TransactionForm({ persons, onSubmit }: TransactionFormProps) {
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="description" className="text-gray-700">Description</Label>
+        <Label htmlFor="description" className="text-foreground">Description</Label>
         <Input
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Description optionnelle..."
-          className="border-gray-300"
+          className="border-border"
         />
       </div>
     </>
   );
 
   return (
-    <Card className="border border-gray-200 shadow-sm">
-      <CardHeader className="bg-gray-50 border-b border-gray-200">
+    <Card className="border border-border shadow-sm">
+      <CardHeader className="bg-muted/50 border-b border-border">
         <CardTitle className="text-lg font-semibold text-gray-800">Nouvelle Transaction</CardTitle>
       </CardHeader>
       <CardContent className="pt-6">
@@ -179,23 +179,23 @@ export function TransactionForm({ persons, onSubmit }: TransactionFormProps) {
               {renderCommonFields()}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="dateDebut" className="text-gray-700">Date début adhésion</Label>
+                  <Label htmlFor="dateDebut" className="text-foreground">Date début adhésion</Label>
                   <Input
                     id="dateDebut"
                     type="date"
                     value={dateDebutAdhesion}
                     onChange={(e) => setDateDebutAdhesion(e.target.value)}
-                    className="border-gray-300"
+                    className="border-border"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="dateFin" className="text-gray-700">Date fin adhésion</Label>
+                  <Label htmlFor="dateFin" className="text-foreground">Date fin adhésion</Label>
                   <Input
                     id="dateFin"
                     type="date"
                     value={dateFinAdhesion}
                     onChange={(e) => setDateFinAdhesion(e.target.value)}
-                    className="border-gray-300"
+                    className="border-border"
                   />
                 </div>
               </div>
@@ -214,9 +214,9 @@ export function TransactionForm({ persons, onSubmit }: TransactionFormProps) {
             <TabsContent value="vente" className="space-y-4 mt-0">
               {renderCommonFields()}
               <div className="space-y-2">
-                <Label htmlFor="categorie" className="text-gray-700">Catégorie de vente *</Label>
+                <Label htmlFor="categorie" className="text-foreground">Catégorie de vente *</Label>
                 <Select value={venteCategorie} onValueChange={(v) => setVenteCategorie(v as VenteSousCategorie)}>
-                  <SelectTrigger className="border-gray-300">
+                  <SelectTrigger className="border-border">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -234,9 +234,9 @@ export function TransactionForm({ persons, onSubmit }: TransactionFormProps) {
             <TabsContent value="depense" className="space-y-4 mt-0">
               {renderCommonFields()}
               <div className="space-y-2">
-                <Label htmlFor="depenseCategorie" className="text-gray-700">Catégorie de dépense *</Label>
+                <Label htmlFor="depenseCategorie" className="text-foreground">Catégorie de dépense *</Label>
                 <Select value={depenseCategorie} onValueChange={(v) => setDepenseCategorie(v as DepenseCategorie)}>
-                  <SelectTrigger className="border-gray-300">
+                  <SelectTrigger className="border-border">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

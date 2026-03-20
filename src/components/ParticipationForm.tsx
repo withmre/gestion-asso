@@ -39,8 +39,8 @@ export function ParticipationForm({ persons, onSubmit }: ParticipationFormProps)
   };
 
   return (
-    <Card className="border border-gray-200 shadow-sm">
-      <CardHeader className="bg-gray-50 border-b border-gray-200">
+    <Card className="border border-border shadow-sm">
+      <CardHeader className="bg-muted/50 border-b border-border">
         <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
           <Calendar className="h-5 w-5" />
           Nouvelle Participation
@@ -49,9 +49,9 @@ export function ParticipationForm({ persons, onSubmit }: ParticipationFormProps)
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="person" className="text-gray-700">Personne *</Label>
+            <Label htmlFor="person" className="text-foreground">Personne *</Label>
             <Select value={personId} onValueChange={setPersonId}>
-              <SelectTrigger className="border-gray-300">
+              <SelectTrigger className="border-border">
                 <SelectValue placeholder="Sélectionner une personne" />
               </SelectTrigger>
               <SelectContent>
@@ -65,9 +65,9 @@ export function ParticipationForm({ persons, onSubmit }: ParticipationFormProps)
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="type" className="text-gray-700">Type d&apos;activité *</Label>
+            <Label htmlFor="type" className="text-foreground">Type d&apos;activité *</Label>
             <Select value={activiteType} onValueChange={(v) => setActiviteType(v as 'formation' | 'evenement')}>
-              <SelectTrigger className="border-gray-300">
+              <SelectTrigger className="border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -78,32 +78,32 @@ export function ParticipationForm({ persons, onSubmit }: ParticipationFormProps)
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="nom" className="text-gray-700">Nom de l&apos;activité *</Label>
+            <Label htmlFor="nom" className="text-foreground">Nom de l&apos;activité *</Label>
             <Input
               id="nom"
               value={activiteNom}
               onChange={(e) => setActiviteNom(e.target.value)}
               placeholder="Ex: Formation Excel, Soirée réseautage..."
-              className="border-gray-300"
+              className="border-border"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="date" className="text-gray-700">Date *</Label>
+            <Label htmlFor="date" className="text-foreground">Date *</Label>
             <Input
               id="date"
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="border-gray-300"
+              className="border-border"
               required
             />
           </div>
 
           <Button 
             type="submit" 
-            className="w-full bg-slate-700 hover:bg-slate-800 text-white"
+            className="w-full bg-primary hover:bg-primary/90 text-white"
           >
             Enregistrer la participation
           </Button>

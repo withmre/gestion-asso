@@ -20,7 +20,7 @@ interface SubventionsPageProps {
 }
 
 const statuts: { value: SubventionStatut; label: string; color: string }[] = [
-  { value: 'a_deposer', label: 'À déposer', color: 'bg-gray-100 text-gray-700' },
+  { value: 'a_deposer', label: 'À déposer', color: 'bg-muted text-foreground' },
   { value: 'en_cours', label: 'En cours', color: 'bg-amber-100 text-amber-700' },
   { value: 'obtenue', label: 'Obtenue', color: 'bg-green-100 text-green-700' },
   { value: 'refusee', label: 'Refusée', color: 'bg-red-100 text-red-700' }
@@ -104,8 +104,8 @@ export function SubventionsPage({ subventions, onAdd, onUpdate, onDelete, onExpo
   return (
     <div className="space-y-6">
       {/* Header avec filtres */}
-      <Card className="border border-gray-200 shadow-sm">
-        <CardHeader className="bg-gray-50 border-b border-gray-200">
+      <Card className="border border-border shadow-sm">
+        <CardHeader className="bg-muted/50 border-b border-border">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
               <FileText className="h-5 w-5 text-blue-500" />
@@ -113,7 +113,7 @@ export function SubventionsPage({ subventions, onAdd, onUpdate, onDelete, onExpo
             </CardTitle>
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
                 <Input
                   placeholder="Rechercher..."
                   value={searchTerm}
@@ -139,7 +139,7 @@ export function SubventionsPage({ subventions, onAdd, onUpdate, onDelete, onExpo
               </Button>
               <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-slate-700 hover:bg-slate-800">
+                  <Button className="bg-primary hover:bg-primary/90">
                     <Plus className="h-4 w-4 mr-2" />
                     Ajouter
                   </Button>
@@ -200,7 +200,7 @@ export function SubventionsPage({ subventions, onAdd, onUpdate, onDelete, onExpo
                       <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Documents requis, contacts..." />
                     </div>
 
-                    <Button onClick={handleSubmit} className="w-full bg-slate-700 hover:bg-slate-800">
+                    <Button onClick={handleSubmit} className="w-full bg-primary hover:bg-primary/90">
                       {editingSubvention ? 'Enregistrer les modifications' : 'Créer la subvention'}
                     </Button>
                   </div>
@@ -212,12 +212,12 @@ export function SubventionsPage({ subventions, onAdd, onUpdate, onDelete, onExpo
       </Card>
 
       {/* Liste des subventions */}
-      <Card className="border border-gray-200 shadow-sm">
+      <Card className="border border-border shadow-sm">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50">
+                <TableRow className="bg-muted/50">
                   <TableHead>Organisme</TableHead>
                   <TableHead>Intitulé</TableHead>
                   <TableHead>Statut</TableHead>
@@ -230,7 +230,7 @@ export function SubventionsPage({ subventions, onAdd, onUpdate, onDelete, onExpo
               <TableBody>
                 {filteredSubventions.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                       Aucune subvention trouvée
                     </TableCell>
                   </TableRow>
@@ -238,9 +238,9 @@ export function SubventionsPage({ subventions, onAdd, onUpdate, onDelete, onExpo
                   filteredSubventions.map((subvention, index) => {
                     const statutConfig = statuts.find(s => s.value === subvention.statut);
                     return (
-                      <TableRow key={subvention.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <TableRow key={subvention.id} className={index % 2 === 0 ? 'bg-card' : 'bg-muted/50'}>
                         <TableCell className="font-medium">{subvention.organisme}</TableCell>
-                        <TableCell className="text-sm text-gray-600 max-w-xs truncate">{subvention.intitule}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground max-w-xs truncate">{subvention.intitule}</TableCell>
                         <TableCell>
                           <Badge className={statutConfig?.color || ''}>
                             {statutConfig?.label}
@@ -250,7 +250,7 @@ export function SubventionsPage({ subventions, onAdd, onUpdate, onDelete, onExpo
                         <TableCell className="text-right">
                           {subvention.montantObtenu !== null && subvention.montantObtenu !== undefined
                             ? formatCurrency(subvention.montantObtenu)
-                            : <span className="text-gray-400">-</span>
+                            : <span className="text-muted-foreground/60">-</span>
                           }
                         </TableCell>
                         <TableCell className="text-sm">

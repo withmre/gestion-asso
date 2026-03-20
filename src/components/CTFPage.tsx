@@ -118,8 +118,8 @@ export function CTFPage({ ctfEvents, persons, onAdd, onUpdate, onDelete }: CTFPa
   return (
     <div className="space-y-6">
       {/* Header avec filtres */}
-      <Card className="border border-gray-200 shadow-sm">
-        <CardHeader className="bg-gray-50 border-b border-gray-200">
+      <Card className="border border-border shadow-sm">
+        <CardHeader className="bg-muted/50 border-b border-border">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
               <Trophy className="h-5 w-5 text-amber-500" />
@@ -127,7 +127,7 @@ export function CTFPage({ ctfEvents, persons, onAdd, onUpdate, onDelete }: CTFPa
             </CardTitle>
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
                 <Input
                   placeholder="Rechercher..."
                   value={searchTerm}
@@ -149,7 +149,7 @@ export function CTFPage({ ctfEvents, persons, onAdd, onUpdate, onDelete }: CTFPa
               </Select>
               <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-slate-700 hover:bg-slate-800">
+                  <Button className="bg-primary hover:bg-primary/90">
                     <Plus className="h-4 w-4 mr-2" />
                     Ajouter
                   </Button>
@@ -207,7 +207,7 @@ export function CTFPage({ ctfEvents, persons, onAdd, onUpdate, onDelete }: CTFPa
                       <Label>Participants</Label>
                       <div className="border rounded-md p-3 max-h-40 overflow-y-auto">
                         {persons.filter(p => p.type !== 'anonyme').map(person => (
-                          <label key={person.id} className="flex items-center gap-2 py-1 cursor-pointer hover:bg-gray-50">
+                          <label key={person.id} className="flex items-center gap-2 py-1 cursor-pointer hover:bg-muted/50">
                             <input
                               type="checkbox"
                               checked={selectedParticipants.includes(person.id)}
@@ -245,7 +245,7 @@ export function CTFPage({ ctfEvents, persons, onAdd, onUpdate, onDelete }: CTFPa
                       <Textarea value={noteInterne} onChange={(e) => setNoteInterne(e.target.value)} placeholder="Commentaires..." />
                     </div>
 
-                    <Button onClick={handleSubmit} className="w-full bg-slate-700 hover:bg-slate-800">
+                    <Button onClick={handleSubmit} className="w-full bg-primary hover:bg-primary/90">
                       {editingCTF ? 'Enregistrer les modifications' : 'Créer le CTF'}
                     </Button>
                   </div>
@@ -257,12 +257,12 @@ export function CTFPage({ ctfEvents, persons, onAdd, onUpdate, onDelete }: CTFPa
       </Card>
 
       {/* Liste des CTFs */}
-      <Card className="border border-gray-200 shadow-sm">
+      <Card className="border border-border shadow-sm">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50">
+                <TableRow className="bg-muted/50">
                   <TableHead>Nom</TableHead>
                   <TableHead>Plateforme</TableHead>
                   <TableHead>Date</TableHead>
@@ -275,13 +275,13 @@ export function CTFPage({ ctfEvents, persons, onAdd, onUpdate, onDelete }: CTFPa
               <TableBody>
                 {filteredCTFs.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                       Aucun CTF trouvé
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredCTFs.map((ctf, index) => (
-                    <TableRow key={ctf.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <TableRow key={ctf.id} className={index % 2 === 0 ? 'bg-card' : 'bg-muted/50'}>
                       <TableCell className="font-medium">
                         {ctf.nom}
                         {ctf.type === 'onsite' && (
@@ -298,7 +298,7 @@ export function CTFPage({ ctfEvents, persons, onAdd, onUpdate, onDelete }: CTFPa
                         )}
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-1 text-sm text-gray-600">
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
                           <Users className="h-3 w-3" />
                           {ctf.participants.length}
                         </div>
@@ -307,24 +307,24 @@ export function CTFPage({ ctfEvents, persons, onAdd, onUpdate, onDelete }: CTFPa
                         {ctf.classement ? (
                           <span className="text-sm font-medium">
                             {ctf.classement.rang} / {ctf.classement.totalEquipes}
-                            <span className="text-gray-400 text-xs ml-1">
+                            <span className="text-muted-foreground/60 text-xs ml-1">
                               (top {((ctf.classement.rang / ctf.classement.totalEquipes) * 100).toFixed(1)}%)
                             </span>
                           </span>
                         ) : (
-                          <span className="text-gray-400 text-sm">-</span>
+                          <span className="text-muted-foreground/60 text-sm">-</span>
                         )}
                       </TableCell>
                       <TableCell>
                         {ctf.scoreObtenu !== undefined && ctf.scoreMax ? (
                           <span className="text-sm">
                             {ctf.scoreObtenu} / {ctf.scoreMax}
-                            <span className="text-gray-400 text-xs ml-1">
+                            <span className="text-muted-foreground/60 text-xs ml-1">
                               ({((ctf.scoreObtenu / ctf.scoreMax) * 100).toFixed(0)}%)
                             </span>
                           </span>
                         ) : (
-                          <span className="text-gray-400 text-sm">-</span>
+                          <span className="text-muted-foreground/60 text-sm">-</span>
                         )}
                       </TableCell>
                       <TableCell className="text-right">

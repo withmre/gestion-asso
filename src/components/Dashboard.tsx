@@ -1,18 +1,28 @@
+import { ScoreSanteCard } from './ScoreSanteCard';
+import { ProjectionTresorerieCard } from './ProjectionTresorerieCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { KPIPersonnes, KPIFinances, KPICTF, KPISubventions } from '@/types';
+import type { KPIPersonnes, KPIFinances, KPICTF, KPISubventions, ScoreSante, ProjectionTresorerie, EvenementPrevisionnel, KPICustom } from '@/types';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis,
   CartesianGrid, Tooltip as RechartsTooltip, Legend, LineChart, Line
 } from 'recharts';
-import { Users, TrendingUp, DollarSign, HelpCircle, TrendingDown, Wallet, Trophy, FileText, Award } from 'lucide-react';
+import { Users, TrendingUp, DollarSign, HelpCircle, TrendingDown, Wallet, Trophy, FileText, Plus, Pencil, Trash2, Check, X } from 'lucide-react';
 
 interface DashboardProps {
   kpiPersonnes: KPIPersonnes;
   kpiFinances: KPIFinances;
   kpiCTF: KPICTF;
   kpiSubventions: KPISubventions;
+  scoreSante: ScoreSante;
+  projectionTresorerie: ProjectionTresorerie[];
+  evenementsPrev: EvenementPrevisionnel[];
+  onAddEvenementPrev: (e: Omit<EvenementPrevisionnel, 'id'>) => void;
+  onDeleteEvenementPrev: (id: string) => void;
+  kpisCustom: KPICustom[];
+  nbSessionsMentorat?: number;
+  heuresTotalesMentorat?: number;
   selectedYear: number;
   onYearChange: (year: number) => void;
 }
@@ -29,15 +39,15 @@ function KPICard({ title, value, icon: Icon, iconColor, tooltip, trend }: {
   trend?: 'up' | 'down' | 'neutral';
 }) {
   return (
-    <Card className="border border-gray-200 shadow-sm">
+    <Card className="border border-border shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="flex items-center gap-2">
-          <CardTitle className="text-sm font-medium text-gray-600">{title}</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
           {tooltip && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <HelpCircle className="h-3.5 w-3.5 text-gray-400 cursor-help" />
+                  <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/60 cursor-help" />
                 </TooltipTrigger>
                 <TooltipContent><p className="max-w-xs text-xs">{tooltip}</p></TooltipContent>
               </Tooltip>
@@ -47,7 +57,7 @@ function KPICard({ title, value, icon: Icon, iconColor, tooltip, trend }: {
         <Icon className={`h-4 w-4 ${iconColor}`} />
       </CardHeader>
       <CardContent>
-        <div className={`text-2xl font-bold ${trend === 'up' ? 'text-green-600' : trend === 'down' ? 'text-red-600' : 'text-gray-900'}`}>
+        <div className={`text-2xl font-bold ${trend === 'up' ? 'text-green-600' : trend === 'down' ? 'text-red-600' : 'text-foreground'}`}>
           {value}
         </div>
       </CardContent>
@@ -55,7 +65,7 @@ function KPICard({ title, value, icon: Icon, iconColor, tooltip, trend }: {
   );
 }
 
-export function Dashboard({ kpiPersonnes, kpiFinances, kpiCTF, kpiSubventions, selectedYear, onYearChange }: DashboardProps) {
+export function Dashboard({ kpiPersonnes, kpiFinances, kpiCTF, kpiSubventions, scoreSante, projectionTresorerie, evenementsPrev, onAddEvenementPrev, onDeleteEvenementPrev, kpisCustom, nbSessionsMentorat = 0, heuresTotalesMentorat = 0, selectedYear, onYearChange }: DashboardProps) {
   const repartitionData = [
     { name: 'Adhésions', value: kpiFinances.repartitionRevenus.adhesions },
     { name: 'Dons', value: kpiFinances.repartitionRevenus.dons },
@@ -76,6 +86,36 @@ export function Dashboard({ kpiPersonnes, kpiFinances, kpiCTF, kpiSubventions, s
     new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(value);
   const formatNumber = (value: number) => 
     new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(value);
+
+
+  const valeurKPICustom = (kpi: KPICustom): string => {
+    const metriques: Record<string, number> = {
+      totalAdherents: kpiPersonnes.totalAdherents,
+      totalMembres: kpiPersonnes.totalMembres,
+      tauxConversion: kpiPersonnes.tauxConversion,
+      tauxFidelisation: kpiPersonnes.tauxFidelisation,
+      chiffreAffaires: kpiFinances.chiffreAffairesTotal,
+      totalDepenses: kpiFinances.totalDepenses,
+      soldeReel: kpiFinances.soldeReel,
+      panierMoyen: kpiFinances.panierMoyen,
+      donMoyen: kpiFinances.donMoyen,
+      totalCTF: kpiCTF.totalCTF,
+      montantSubventions: kpiSubventions.montantTotalObtenu,
+      tauxAcceptationSubventions: kpiSubventions.tauxAcceptation,
+      nbSessions: nbSessionsMentorat,
+      heuresTotalesMentorat: heuresTotalesMentorat,
+    };
+    const a = metriques[kpi.metriqueA] ?? 0;
+    const b = metriques[kpi.metriqueB] ?? 1;
+    let result = 0;
+    if (kpi.operation === 'diviser') result = b !== 0 ? a / b : 0;
+    else if (kpi.operation === 'soustraire') result = a - b;
+    else if (kpi.operation === 'multiplier') result = a * b;
+    else if (kpi.operation === 'pourcentage') result = b !== 0 ? (a / b) * 100 : 0;
+    if (kpi.format === 'montant') return formatCurrency(result);
+    if (kpi.format === 'pourcentage') return `${formatNumber(result)}%`;
+    return formatNumber(result);
+  };
 
   const soldeTrend = kpiFinances.soldeReel >= 0 ? 'up' : 'down';
   const currentYear = new Date().getFullYear();
@@ -103,7 +143,6 @@ export function Dashboard({ kpiPersonnes, kpiFinances, kpiCTF, kpiSubventions, s
           <KPICard title="Adhérents" value={kpiPersonnes.totalAdherents.toString()} icon={Users} iconColor="text-blue-600" />
           <KPICard title="Membres" value={kpiPersonnes.totalMembres.toString()} icon={Users} iconColor="text-green-600" />
           <KPICard title="Taux conversion" value={`${formatNumber(kpiPersonnes.tauxConversion)}%`} icon={TrendingUp} iconColor="text-amber-600" />
-          <KPICard title="Certifiés" value={kpiPersonnes.totalCertifies.toString()} icon={Award} iconColor="text-purple-600" />
         </div>
 
         {/* KPI Finances */}
@@ -124,8 +163,8 @@ export function Dashboard({ kpiPersonnes, kpiFinances, kpiCTF, kpiSubventions, s
 
         {/* Graphiques */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="border border-gray-200 shadow-sm">
-            <CardHeader className="bg-gray-50 border-b border-gray-200">
+          <Card className="border border-border shadow-sm">
+            <CardHeader className="bg-muted/50 border-b border-border">
               <CardTitle className="text-lg font-semibold text-gray-800">Répartition des revenus</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
@@ -143,12 +182,12 @@ export function Dashboard({ kpiPersonnes, kpiFinances, kpiCTF, kpiSubventions, s
                     <Legend />
                   </PieChart>
                 </ResponsiveContainer>
-              ) : <p className="text-gray-500 text-center py-8">Aucune donnée</p>}
+              ) : <p className="text-muted-foreground text-center py-8">Aucune donnée</p>}
             </CardContent>
           </Card>
 
-          <Card className="border border-gray-200 shadow-sm">
-            <CardHeader className="bg-gray-50 border-b border-gray-200">
+          <Card className="border border-border shadow-sm">
+            <CardHeader className="bg-muted/50 border-b border-border">
               <CardTitle className="text-lg font-semibold text-gray-800">Répartition des dépenses</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
@@ -166,14 +205,14 @@ export function Dashboard({ kpiPersonnes, kpiFinances, kpiCTF, kpiSubventions, s
                     <Legend />
                   </PieChart>
                 </ResponsiveContainer>
-              ) : <p className="text-gray-500 text-center py-8">Aucune dépense</p>}
+              ) : <p className="text-muted-foreground text-center py-8">Aucune dépense</p>}
             </CardContent>
           </Card>
         </div>
 
         {/* Évolution mensuelle - 3 courbes */}
-        <Card className="border border-gray-200 shadow-sm">
-          <CardHeader className="bg-gray-50 border-b border-gray-200">
+        <Card className="border border-border shadow-sm">
+          <CardHeader className="bg-muted/50 border-b border-border">
             <CardTitle className="text-lg font-semibold text-gray-800">Évolution mensuelle</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
@@ -193,23 +232,23 @@ export function Dashboard({ kpiPersonnes, kpiFinances, kpiCTF, kpiSubventions, s
         </Card>
 
         {/* Top 5 membres actifs */}
-        <Card className="border border-gray-200 shadow-sm">
-          <CardHeader className="bg-gray-50 border-b border-gray-200">
+        <Card className="border border-border shadow-sm">
+          <CardHeader className="bg-muted/50 border-b border-border">
             <CardTitle className="text-lg font-semibold text-gray-800">Top 5 membres les plus actifs</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
             {kpiPersonnes.top5MembresActifs.length > 0 ? (
               <div className="space-y-3">
                 {kpiPersonnes.top5MembresActifs.map((item, index) => (
-                  <div key={item.person.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={item.person.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                     <div className="flex items-center gap-3">
-                      <span className="flex items-center justify-center w-8 h-8 bg-slate-700 text-white rounded-full text-sm font-medium">
+                      <span className="flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full text-sm font-medium">
                         {index + 1}
                       </span>
-                      <span className="font-medium text-gray-900">{item.person.prenom} {item.person.nom}</span>
-                      <span className="text-sm text-gray-500">({item.person.type})</span>
+                      <span className="font-medium text-foreground">{item.person.prenom} {item.person.nom}</span>
+                      <span className="text-sm text-muted-foreground">({item.person.type})</span>
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-muted-foreground">
                       {item.nbActivites} participations
                       {item.scoreDiscord > 0 && <span className="ml-2 text-indigo-600">+ {item.scoreDiscord} Discord</span>}
                       <span className="ml-2 font-medium">= {item.scoreTotal} total</span>
@@ -217,9 +256,45 @@ export function Dashboard({ kpiPersonnes, kpiFinances, kpiCTF, kpiSubventions, s
                   </div>
                 ))}
               </div>
-            ) : <p className="text-gray-500 text-center py-4">Aucune activité enregistrée</p>}
+            ) : <p className="text-muted-foreground text-center py-4">Aucune activité enregistrée</p>}
           </CardContent>
         </Card>
+
+        {/* Score de santé */}
+        <ScoreSanteCard score={scoreSante} />
+
+        {/* Projection de trésorerie */}
+        <ProjectionTresorerieCard
+          projection={projectionTresorerie}
+          onAddEvenement={onAddEvenementPrev}
+          onDeleteEvenement={onDeleteEvenementPrev}
+          evenements={evenementsPrev}
+        />
+
+        {/* KPIs personnalisés */}
+        {kpisCustom.length > 0 && (
+          <Card className="border border-border shadow-sm">
+            <CardHeader className="bg-muted/50 border-b border-border">
+              <CardTitle className="text-lg font-semibold text-foreground">Mes indicateurs personnalisés</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {kpisCustom.map(kpi => (
+                  <Card key={kpi.id} className="border border-border shadow-sm">
+                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                      <CardTitle className="text-sm font-medium text-muted-foreground">{kpi.nom}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-foreground">{valeurKPICustom(kpi)}</div>
+                      <p className="text-xs text-muted-foreground mt-1">{kpi.metriqueA} {kpi.operation} {kpi.metriqueB}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
       </div>
     </TooltipProvider>
   );

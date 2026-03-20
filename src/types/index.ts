@@ -27,7 +27,7 @@ export interface Person {
     scoreActivite?: number;
   };
   tarifAdhesionId?: string;
-  certifications?: string[];
+  roleMentorat?: 'mentor' | 'apprenti' | 'les_deux' | null;
 }
 
 export interface Transaction {
@@ -136,6 +136,10 @@ export interface AssociationParams {
   typeAdhesion: TypeAdhesion;
   tarifsAdhesion: TarifAdhesion[];
   dateDebutExercice?: string;
+  theme?: 'light' | 'dark';
+  pinHash?: string;
+  versionExport?: number;
+  hashtagsRS?: string;
 }
 
 export interface DataStore {
@@ -148,6 +152,10 @@ export interface DataStore {
   actifs: Actif[];
   passifs: Passif[];
   params: AssociationParams;
+  ecritures: EcritureComptable[];
+  evenementsPrev: EvenementPrevisionnel[];
+  kpisCustom: KPICustom[];
+  sessionsMentorat: SessionMentorat[];
 }
 
 export interface KPIPersonnes {
@@ -163,7 +171,6 @@ export interface KPIPersonnes {
     scoreDiscord: number;
     scoreTotal: number;
   }[];
-  totalCertifies: number;
 }
 
 export interface KPIFinances {
@@ -254,4 +261,81 @@ export interface DiscordKPIData {
   idDiscord: string;
   nombreActivites: number;
   derniereActivite?: string;
+}
+
+export type ComptesPCA =
+  | '101' | '102' | '103' | '106'   // Classe 1 - Capitaux
+  | '211' | '215' | '218' | '281'   // Classe 2 - Immobilisations
+  | '401' | '411' | '421'           // Classe 4 - Tiers
+  | '512' | '530'                   // Classe 5 - Financier
+  | '601' | '606' | '613' | '616' | '622' | '623' | '626' | '627' | '641' | '658' | '671'  // Classe 6 - Charges
+  | '706' | '707' | '708' | '740' | '750' | '756' | '757' | '758'  // Classe 7 - Produits
+  | '860' | '861' | '862' | '863' | '864';  // Classe 8 - Bénévolat
+
+export interface LigneEcriture {
+  compte: string;
+  libelle: string;
+  debit: number;
+  credit: number;
+}
+
+export interface EcritureComptable {
+  id: string;
+  date: string;
+  libelle: string;
+  lignes: LigneEcriture[];
+  transactionId?: string;
+  journalCode: 'VTE' | 'ACH' | 'BNQ' | 'CAI' | 'OD';
+}
+
+export interface EvenementPrevisionnel {
+  id: string;
+  libelle: string;
+  montant: number;
+  date: string;
+  type: 'recette' | 'depense';
+}
+
+export interface SessionMentorat {
+  id: string;
+  mentorId: string;
+  apprentiId: string;
+  date: string;
+  dureeMinutes: number;
+  thematiqueAbordee: string;
+  objectifSession?: string;
+  notesPrivees?: string;
+  progressionPercue?: 1 | 2 | 3 | 4 | 5;
+  statut: 'planifiee' | 'realisee' | 'annulee';
+}
+
+export interface KPICustom {
+  id: string;
+  nom: string;
+  metriqueA: string;
+  operation: 'diviser' | 'soustraire' | 'multiplier' | 'pourcentage';
+  metriqueB: string;
+  format: 'nombre' | 'pourcentage' | 'montant';
+  icone: string;
+  couleur: string;
+}
+
+export interface ScoreSante {
+  score: number;
+  niveau: 'danger' | 'warning' | 'ok';
+  criteres: {
+    nom: string;
+    valeur: boolean;
+    poids: number;
+    score: number;
+    suggestion?: string;
+  }[];
+}
+
+export interface ProjectionTresorerie {
+  mois: string;
+  soldePrevu: number;
+  recettesPrevisionnelles: number;
+  depensesPrevisionnelles: number;
+  evenements: EvenementPrevisionnel[];
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Toaster, toast } from 'sonner';
 import { useDataStore } from '@/hooks/useDataStore';
@@ -22,6 +22,14 @@ import { SubventionsPage } from '@/components/SubventionsPage';
 import { CTFPage } from '@/components/CTFPage';
 import { PartenairesPage } from '@/components/PartenairesPage';
 import { DataManagement } from '@/components/DataManagement';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { Onboarding } from '@/components/Onboarding';
+import { ComptabiliteDouble } from '@/components/ComptabiliteDouble';
+import { KPIManager } from '@/components/KPIManager';
+import { CertificatGenerator } from '@/components/CertificatGenerator';
+import { VisuelsRS } from '@/components/VisuelsRS';
+import { MentoratPage } from '@/components/MentoratPage';
+import { PinLock } from '@/components/PinLock';
 import {
   LayoutDashboard,
   Users,
@@ -33,6 +41,11 @@ import {
   FileText,
   Handshake,
   Trophy,
+  BookOpen,
+  GraduationCap,
+  Sliders,
+  Award,
+  ImageIcon,
 } from 'lucide-react';
 import type {
   Person,
@@ -93,22 +106,87 @@ function App() {
     calculateAlertes,
     getTransactionsByPeriod,
     getTransactionsByYear,
+    ecritures,
+    addEcriture,
+    deleteEcriture,
+    genererEcritureDepuisTransaction,
+    evenementsPrev,
+    addEvenementPrev,
+    deleteEvenementPrev,
+    kpisCustom,
+    calculateScoreSante,
+    calculateProjectionTresorerie,
+    sessionsMentorat,
+    addSessionMentorat,
+    updateSessionMentorat,
+    deleteSessionMentorat,
+    addKPICustom,
+    updateKPICustom,
+    deleteKPICustom,
     markWarningAsSeen,
   } = useDataStore();
 
   const { generateExcel, generateExcelAnnuel } = useExcelExport();
 
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [isDark, setIsDark] = useState(() => {
+    const stored = localStorage.getItem('theme');
+    return stored ? stored === 'dark' : false;
+  });
+  const [isLocked, setIsLocked] = useState(false);
+
+  // Appliquer le thème sur <html>
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDark);
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  }, [isDark]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   const [editingPerson, setEditingPerson] = useState<Person | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    return !localStorage.getItem('onboarding_done');
+  });
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [editingParticipation, setEditingParticipation] = useState<Participation | null>(null);
 
+  // Verrouillage automatique après 5 minutes d'inactivité
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const resetTimer = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    if (params.pinHash) {
+      timerRef.current = setTimeout(() => setIsLocked(true), 5 * 60 * 1000);
+    }
+  }, [params.pinHash]);
+
+  useEffect(() => {
+    const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
+    events.forEach(e => window.addEventListener(e, resetTimer));
+    resetTimer();
+    return () => {
+      events.forEach(e => window.removeEventListener(e, resetTimer));
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [resetTimer]);
+
+  const handleToggleTheme = () => setIsDark(v => !v);
+
+  const handleOnboardingComplete = (newParams: Partial<import('@/types').AssociationParams>) => {
+    updateParams(newParams);
+    localStorage.setItem('onboarding_done', 'true');
+    setShowOnboarding(false);
+  };
+
+  const handleOnboardingSkip = () => {
+    localStorage.setItem('onboarding_done', 'true');
+    setShowOnboarding(false);
+  };
+
+
   if (!isLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-lg text-gray-600">Chargement...</div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-lg text-muted-foreground">Chargement...</div>
       </div>
     );
   }
@@ -119,6 +197,8 @@ function App() {
   const kpiCTF = calculateKPICTF();
   const kpiSubventions = calculateKPISubventions();
   const alertes = calculateAlertes();
+  const scoreSante = calculateScoreSante();
+  const projectionTresorerie = calculateProjectionTresorerie();
 
   const handleAddPerson = (personData: Omit<Person, 'id' | 'dateInscription'>) => {
     addPerson({ ...personData, dateInscription: new Date().toISOString().split('T')[0] });
@@ -303,7 +383,18 @@ function App() {
     return success;
   };
 
-  const headerIcon = params.logoUrl ? (
+
+  const urlEstSure = (url: string | undefined): boolean => {
+    if (!url) return false;
+    try {
+      const parsed = new URL(url);
+      return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+    } catch {
+      return false;
+    }
+  };
+
+  const headerIcon = params.logoUrl && urlEstSure(params.logoUrl) ? (
     <img
       src={params.logoUrl}
       alt="Logo association"
@@ -319,31 +410,40 @@ function App() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Toaster position="top-right" richColors />
+
+      {showOnboarding && (
+        <Onboarding
+          onComplete={handleOnboardingComplete}
+          onSkip={handleOnboardingSkip}
+        />
+      )}
+
+      {isLocked && params.pinHash && (
+        <PinLock pinHash={params.pinHash} onUnlock={() => setIsLocked(false)} />
+      )}
 
       <WarningBanner hasSeenWarning={hasSeenWarning} onMarkAsSeen={markWarningAsSeen} />
 
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
+      <header className="bg-card border-b border-border shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
               {headerIcon}
               <div>
-                <h1 className="text-xl font-bold text-gray-900">
+                <h1 className="text-xl font-bold text-foreground">
                   {params.nom || 'Association Comptabilité'}
                 </h1>
-                <p className="text-xs text-gray-500">Gestion comptable et analytique</p>
+                <p className="text-xs text-muted-foreground">Gestion comptable et analytique</p>
               </div>
             </div>
-            <div className="text-sm text-gray-500">
-              {new Date().toLocaleDateString('fr-FR', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-muted-foreground hidden md:block">
+                {new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              </span>
+              <ThemeToggle isDark={isDark} onToggle={handleToggleTheme} />
             </div>
           </div>
         </div>
@@ -360,7 +460,7 @@ function App() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
 
           {/* Navigation — 9 onglets */}
-          <TabsList className="grid w-full grid-cols-9 bg-white border border-gray-200 p-1">
+          <TabsList className="grid w-full grid-cols-14 bg-card border border-border p-1">
             {[
               { value: 'dashboard',     icon: LayoutDashboard, label: 'Dashboard' },
               { value: 'persons',       icon: Users,           label: 'Personnes' },
@@ -370,12 +470,17 @@ function App() {
               { value: 'subventions',   icon: FileText,        label: 'Subventions' },
               { value: 'ctf',           icon: Trophy,          label: 'CTF' },
               { value: 'partenaires',   icon: Handshake,       label: 'Partenaires' },
-              { value: 'settings',      icon: Settings,        label: 'Paramètres' },
+              { value: 'mentorat',      icon: GraduationCap,   label: 'Mentorat' },
+      { value: 'kpi',           icon: Sliders,         label: 'Mes KPIs' },
+      { value: 'comptabilite',  icon: BookOpen,         label: 'Comptabilité' },
+      { value: 'certificats',   icon: Award,           label: 'Certificats' },
+      { value: 'visuels',       icon: ImageIcon,       label: 'Visuels RS' },
+      { value: 'settings',      icon: Settings,        label: 'Paramètres' },
             ].map(({ value, icon: Icon, label }) => (
               <TabsTrigger
                 key={value}
                 value={value}
-                className="data-[state=active]:bg-[#1E3A5F] data-[state=active]:text-white flex items-center gap-1 text-xs"
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-1 text-xs"
               >
                 <Icon className="h-4 w-4 shrink-0" />
                 <span className="hidden lg:inline">{label}</span>
@@ -385,12 +490,20 @@ function App() {
 
           {/* ── Dashboard ─────────────────────────────────────────────── */}
           <TabsContent value="dashboard" className="space-y-6 mt-0">
-            <h2 className="text-2xl font-bold text-gray-900">Tableau de bord</h2>
+            <h2 className="text-2xl font-bold text-foreground">Tableau de bord</h2>
             <Dashboard
               kpiPersonnes={kpiPersonnes}
               kpiFinances={kpiFinances}
               kpiCTF={kpiCTF}
               kpiSubventions={kpiSubventions}
+              scoreSante={scoreSante}
+              projectionTresorerie={projectionTresorerie}
+              evenementsPrev={evenementsPrev}
+              onAddEvenementPrev={addEvenementPrev}
+              onDeleteEvenementPrev={deleteEvenementPrev}
+              kpisCustom={kpisCustom}
+              nbSessionsMentorat={sessionsMentorat.length}
+              heuresTotalesMentorat={sessionsMentorat.filter(s => s.statut === 'realisee').reduce((acc, s) => acc + s.dureeMinutes, 0)}
               selectedYear={selectedYear}
               onYearChange={setSelectedYear}
             />
@@ -398,7 +511,7 @@ function App() {
 
           {/* ── Personnes ─────────────────────────────────────────────── */}
           <TabsContent value="persons" className="space-y-6 mt-0">
-            <h2 className="text-2xl font-bold text-gray-900">Gestion des personnes</h2>
+            <h2 className="text-2xl font-bold text-foreground">Gestion des personnes</h2>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-1 space-y-6">
                 <PersonForm tarifsAdhesion={params.tarifsAdhesion} onSubmit={handleAddPerson} />
@@ -424,7 +537,7 @@ function App() {
 
           {/* ── Transactions ──────────────────────────────────────────── */}
           <TabsContent value="transactions" className="space-y-6 mt-0">
-            <h2 className="text-2xl font-bold text-gray-900">Gestion des transactions</h2>
+            <h2 className="text-2xl font-bold text-foreground">Gestion des transactions</h2>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-1">
                 <TransactionForm persons={persons} onSubmit={handleAddTransaction} />
@@ -449,7 +562,7 @@ function App() {
 
           {/* ── Activités ─────────────────────────────────────────────── */}
           <TabsContent value="participations" className="space-y-6 mt-0">
-            <h2 className="text-2xl font-bold text-gray-900">Gestion des activités</h2>
+            <h2 className="text-2xl font-bold text-foreground">Gestion des activités</h2>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-1 space-y-6">
                 <ParticipationForm persons={persons} onSubmit={handleAddParticipation} />
@@ -475,7 +588,7 @@ function App() {
 
           {/* ── Bilan ─────────────────────────────────────────────────── */}
           <TabsContent value="bilan" className="space-y-6 mt-0">
-            <h2 className="text-2xl font-bold text-gray-900">Bilan & Stocks</h2>
+            <h2 className="text-2xl font-bold text-foreground">Bilan & Stocks</h2>
             <BilanPage
               actifs={actifs}
               passifs={passifs}
@@ -490,7 +603,7 @@ function App() {
 
           {/* ── Subventions ───────────────────────────────────────────── */}
           <TabsContent value="subventions" className="space-y-6 mt-0">
-            <h2 className="text-2xl font-bold text-gray-900">Subventions & Financements</h2>
+            <h2 className="text-2xl font-bold text-foreground">Subventions & Financements</h2>
             <SubventionsPage
               subventions={subventions}
               onAdd={handleAddSubvention}
@@ -502,7 +615,7 @@ function App() {
 
           {/* ── CTF ───────────────────────────────────────────────────── */}
           <TabsContent value="ctf" className="space-y-6 mt-0">
-            <h2 className="text-2xl font-bold text-gray-900">CTF & Compétitions</h2>
+            <h2 className="text-2xl font-bold text-foreground">CTF & Compétitions</h2>
             <CTFPage
               ctfEvents={ctfEvents}
               persons={persons}
@@ -514,7 +627,7 @@ function App() {
 
           {/* ── Partenaires ───────────────────────────────────────────── */}
           <TabsContent value="partenaires" className="space-y-6 mt-0">
-            <h2 className="text-2xl font-bold text-gray-900">Partenaires & Sponsors</h2>
+            <h2 className="text-2xl font-bold text-foreground">Partenaires & Sponsors</h2>
             <PartenairesPage
               partenaires={partenaires}
               onAdd={handleAddPartenaire}
@@ -523,9 +636,67 @@ function App() {
             />
           </TabsContent>
 
+          {/* ── Mentorat ─────────────────────────────────────────────── */}
+          <TabsContent value="mentorat" className="space-y-6 mt-0">
+            <h2 className="text-2xl font-bold text-foreground">Suivi du mentorat</h2>
+            <MentoratPage
+              sessions={sessionsMentorat}
+              persons={persons}
+              onAdd={addSessionMentorat}
+              onUpdate={updateSessionMentorat}
+              onDelete={deleteSessionMentorat}
+            />
+          </TabsContent>
+
+          {/* ── KPIs personnalisés ────────────────────────────────────────── */}
+          <TabsContent value="kpi" className="space-y-6 mt-0">
+            <h2 className="text-2xl font-bold text-foreground">Indicateurs personnalisés</h2>
+            <KPIManager
+              kpisCustom={kpisCustom}
+              onAdd={addKPICustom}
+              onUpdate={updateKPICustom}
+              onDelete={deleteKPICustom}
+            />
+          </TabsContent>
+
+          {/* ── Comptabilité double entrée ─────────────────────────── */}
+          <TabsContent value="comptabilite" className="space-y-6 mt-0">
+            <h2 className="text-2xl font-bold text-foreground">Comptabilité — Partie double</h2>
+            <ComptabiliteDouble
+              ecritures={ecritures}
+              transactions={transactions}
+              persons={persons}
+              onDelete={deleteEcriture}
+              onGenererDepuisTransactions={handleGenererEcritures}
+            />
+          </TabsContent>
+
+          {/* ── Certificats ─────────────────────────────────────────── */}
+          <TabsContent value="certificats" className="space-y-6 mt-0">
+            <h2 className="text-2xl font-bold text-foreground">Générateur de certificats</h2>
+            <CertificatGenerator
+              persons={persons}
+              ctfEvents={ctfEvents}
+              sessionsMentorat={sessionsMentorat}
+              params={params}
+            />
+          </TabsContent>
+
+          {/* ── Visuels RS ────────────────────────────────────────────────── */}
+          <TabsContent value="visuels" className="space-y-6 mt-0">
+            <h2 className="text-2xl font-bold text-foreground">Visuels pour les réseaux sociaux</h2>
+            <VisuelsRS
+              kpiFinances={kpiFinances}
+              kpiPersonnes={kpiPersonnes}
+              ctfEvents={ctfEvents}
+              scoreSante={scoreSante}
+              params={params}
+            />
+          </TabsContent>
+
           {/* ── Paramètres ────────────────────────────────────────────── */}
           <TabsContent value="settings" className="space-y-6 mt-0">
-            <h2 className="text-2xl font-bold text-gray-900">Paramètres et exports</h2>
+            <h2 className="text-2xl font-bold text-foreground">Paramètres et exports</h2>
             <div className="max-w-2xl">
               <DataManagement
                 params={params}
@@ -541,9 +712,9 @@ function App() {
         </Tabs>
       </main>
 
-      <footer className="bg-white border-t border-gray-200 mt-auto">
+      <footer className="bg-card border-t border-border mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <p className="text-center text-sm text-gray-500">
+          <p className="text-center text-sm text-muted-foreground">
             Application de gestion comptable pour association — Données stockées localement
           </p>
         </div>

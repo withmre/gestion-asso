@@ -96,7 +96,7 @@ export function ParticipationEditModal({ participation, isOpen, onClose, onSave,
             <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Commentaires..." />
           </div>
 
-          <Button onClick={handleSubmit} className="w-full bg-slate-700 hover:bg-slate-800">
+          <Button onClick={handleSubmit} className="w-full bg-primary hover:bg-primary/90">
             Enregistrer les modifications
           </Button>
         </div>

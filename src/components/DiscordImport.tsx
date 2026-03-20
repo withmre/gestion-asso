@@ -61,8 +61,8 @@ export function DiscordImport({ persons, onImport }: DiscordImportProps) {
   const personsWithDiscord = persons.filter(p => p.kpiDiscord?.idDiscord);
 
   return (
-    <Card className="border border-gray-200 shadow-sm">
-      <CardHeader className="bg-gray-50 border-b border-gray-200">
+    <Card className="border border-border shadow-sm">
+      <CardHeader className="bg-muted/50 border-b border-border">
         <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
           <MessageSquare className="h-5 w-5" />
           Importer KPIs Discord (Draftbot)
@@ -78,13 +78,13 @@ export function DiscordImport({ persons, onImport }: DiscordImportProps) {
           </div>
         </div>
 
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted-foreground">
           Uploadez un fichier JSON généré par Draftbot ou un bot Discord. 
           Le système fera correspondre les IDs Discord pour mettre à jour les KPI d&apos;activité.
         </p>
 
-        <p className="text-xs text-gray-500">
-          Format attendu : <code className="bg-gray-100 px-1 rounded">[&#123;&quot;id_discord&quot;: &quot;123...&quot;, &quot;nombre_activites&quot;: 5&#125;]</code>
+        <p className="text-xs text-muted-foreground">
+          Format attendu : <code className="bg-muted px-1 rounded">[&#123;&quot;id_discord&quot;: &quot;123...&quot;, &quot;nombre_activites&quot;: 5&#125;]</code>
         </p>
 
         <input
@@ -99,7 +99,7 @@ export function DiscordImport({ persons, onImport }: DiscordImportProps) {
           onClick={() => fileInputRef.current?.click()}
           disabled={isParsing}
           variant="outline"
-          className="w-full border-slate-300 text-slate-700 hover:bg-slate-50"
+          className="w-full border-border text-primary hover:bg-muted/50"
         >
           <Upload className="h-4 w-4 mr-2" />
           {isParsing ? 'Analyse en cours...' : 'Sélectionner un fichier JSON'}
@@ -124,14 +124,14 @@ export function DiscordImport({ persons, onImport }: DiscordImportProps) {
 
         {preview.length > 0 && (
           <div className="mt-4">
-            <p className="text-sm font-medium text-gray-700 mb-2">Aperçu des données détectées :</p>
-            <div className="bg-gray-50 rounded-lg p-3 space-y-2 max-h-40 overflow-y-auto">
+            <p className="text-sm font-medium text-foreground mb-2">Aperçu des données détectées :</p>
+            <div className="bg-muted/50 rounded-lg p-3 space-y-2 max-h-40 overflow-y-auto">
               {preview.map((data, index) => {
                 const matchedPerson = persons.find(p => p.kpiDiscord?.idDiscord === data.idDiscord);
                 return (
                   <div key={index} className="text-sm flex items-center gap-2">
-                    <span className="font-mono text-xs text-gray-500">{data.idDiscord.substring(0, 8)}...</span>
-                    <span className="text-gray-400">-</span>
+                    <span className="font-mono text-xs text-muted-foreground">{data.idDiscord.substring(0, 8)}...</span>
+                    <span className="text-muted-foreground/60">-</span>
                     <span className="font-medium">{data.nombreActivites} activités</span>
                     {matchedPerson ? (
                       <span className="text-green-600 text-xs">({matchedPerson.prenom} {matchedPerson.nom})</span>
@@ -141,7 +141,7 @@ export function DiscordImport({ persons, onImport }: DiscordImportProps) {
                   </div>
                 );
               })}
-              {preview.length === 5 && <p className="text-xs text-gray-400 italic">...</p>}
+              {preview.length === 5 && <p className="text-xs text-muted-foreground/60 italic">...</p>}
             </div>
           </div>
         )}

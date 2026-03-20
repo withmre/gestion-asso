@@ -25,7 +25,7 @@ export function WarningBanner({ hasSeenWarning, onMarkAsSeen }: WarningBannerPro
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="relative max-w-2xl w-full bg-white rounded-lg shadow-2xl border-2 border-amber-500 overflow-hidden">
+      <div className="relative max-w-2xl w-full bg-card rounded-lg shadow-2xl border-2 border-amber-500 overflow-hidden">
         {/* Header */}
         <div className="bg-amber-500 px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -49,7 +49,7 @@ export function WarningBanner({ hasSeenWarning, onMarkAsSeen }: WarningBannerPro
             </p>
           </div>
 
-          <div className="space-y-3 text-gray-700">
+          <div className="space-y-3 text-foreground">
             <p className="flex items-start gap-2">
               <span className="text-red-500 font-bold">•</span>
               <span>Si vous videz votre cache ou vos cookies, vous perdrez toutes vos données.</span>
@@ -74,10 +74,10 @@ export function WarningBanner({ hasSeenWarning, onMarkAsSeen }: WarningBannerPro
         </div>
 
         {/* Footer */}
-        <div className="bg-gray-50 px-6 py-4 flex justify-end">
+        <div className="bg-muted/50 px-6 py-4 flex justify-end">
           <Button
             onClick={handleClose}
-            className="bg-slate-700 hover:bg-slate-800 text-white"
+            className="bg-primary hover:bg-primary/90 text-white"
           >
             J&apos;ai compris, ne plus afficher
           </Button>

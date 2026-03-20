@@ -18,6 +18,13 @@ import type {
   KPISubventions,
   Alerte,
   AssociationParams,
+  EcritureComptable,
+  EvenementPrevisionnel,
+  KPICustom,
+  ScoreSante,
+  ProjectionTresorerie,
+  LigneEcriture,
+  SessionMentorat,
 } from '@/types';
 
 const STORAGE_KEY = 'association_comptabilite_data_v3';
@@ -43,6 +50,10 @@ const storeVide: DataStore = {
   partenaires: [],
   actifs: [],
   passifs: [],
+  ecritures: [],
+  evenementsPrev: [],
+  kpisCustom: [],
+  sessionsMentorat: [],
   params: paramsParDefaut,
 };
 
@@ -336,10 +347,6 @@ export function useDataStore() {
       .sort((a, b) => b.scoreTotal - a.scoreTotal)
       .slice(0, 5);
 
-    const totalCertifies = data.persons.filter(
-      p => p.certifications && p.certifications.length > 0
-    ).length;
-
     return {
       totalAdherents: adherents.length,
       totalMembres: membres.length,
@@ -348,7 +355,6 @@ export function useDataStore() {
       moyenneActivitesParMembre,
       tauxFidelisation,
       top5MembresActifs,
-      totalCertifies,
     };
   }, [data]);
 
@@ -548,6 +554,220 @@ export function useDataStore() {
     return data.transactions.filter(t => new Date(t.date).getFullYear() === annee);
   }, [data.transactions]);
 
+
+  // ── Écritures comptables ────────────────────────────────────────────────
+
+  const addEcriture = useCallback((e: Omit<EcritureComptable, 'id'>): EcritureComptable => {
+    const nouveau = { ...e, id: uuidv4() };
+    setData(prev => ({ ...prev, ecritures: [...prev.ecritures, nouveau] }));
+    return nouveau;
+  }, []);
+
+  const deleteEcriture = useCallback((id: string) => {
+    setData(prev => ({ ...prev, ecritures: prev.ecritures.filter(e => e.id !== id) }));
+  }, []);
+
+  // ── Événements prévisionnels ────────────────────────────────────────────
+
+  const addEvenementPrev = useCallback((e: Omit<EvenementPrevisionnel, 'id'>): EvenementPrevisionnel => {
+    const nouveau = { ...e, id: uuidv4() };
+    setData(prev => ({ ...prev, evenementsPrev: [...prev.evenementsPrev, nouveau] }));
+    return nouveau;
+  }, []);
+
+  const deleteEvenementPrev = useCallback((id: string) => {
+    setData(prev => ({ ...prev, evenementsPrev: prev.evenementsPrev.filter(e => e.id !== id) }));
+  }, []);
+
+  // ── KPIs personnalisés ──────────────────────────────────────────────────
+
+  const addKPICustom = useCallback((k: Omit<KPICustom, 'id'>): KPICustom => {
+    const nouveau = { ...k, id: uuidv4() };
+    setData(prev => ({ ...prev, kpisCustom: [...prev.kpisCustom, nouveau] }));
+    return nouveau;
+  }, []);
+
+  const updateKPICustom = useCallback((id: string, updates: Partial<KPICustom>) => {
+    setData(prev => ({
+      ...prev,
+      kpisCustom: prev.kpisCustom.map(k => k.id === id ? { ...k, ...updates } : k),
+    }));
+  }, []);
+
+  const deleteKPICustom = useCallback((id: string) => {
+    setData(prev => ({ ...prev, kpisCustom: prev.kpisCustom.filter(k => k.id !== id) }));
+  }, []);
+
+  // ── Génération automatique d'écritures comptables ──────────────────────
+
+  const genererEcritureDepuisTransaction = useCallback((tx: import('@/types').Transaction): LigneEcriture[] => {
+    const lignes: LigneEcriture[] = [];
+    if (tx.type === 'adhesion') {
+      lignes.push({ compte: '512', libelle: 'Banque', debit: tx.montant, credit: 0 });
+      lignes.push({ compte: '756', libelle: 'Cotisations', debit: 0, credit: tx.montant });
+    } else if (tx.type === 'don') {
+      lignes.push({ compte: '512', libelle: 'Banque', debit: tx.montant, credit: 0 });
+      lignes.push({ compte: '758', libelle: 'Dons', debit: 0, credit: tx.montant });
+    } else if (tx.type === 'vente') {
+      const compte = tx.venteSousCategorie === 'formation' ? '706' : tx.venteSousCategorie === 'evenementiel' ? '708' : '707';
+      lignes.push({ compte: '512', libelle: 'Banque', debit: tx.montant, credit: 0 });
+      lignes.push({ compte, libelle: 'Vente', debit: 0, credit: tx.montant });
+    } else if (tx.type === 'depense') {
+      const compte = tx.depenseCategorie === 'frais_bancaires' ? '627'
+        : tx.depenseCategorie === 'prestations' ? '622'
+        : tx.depenseCategorie === 'loyer' ? '613'
+        : tx.depenseCategorie === 'charges' ? '641'
+        : '606';
+      lignes.push({ compte, libelle: tx.description || 'Charge', debit: tx.montant, credit: 0 });
+      lignes.push({ compte: '512', libelle: 'Banque', debit: 0, credit: tx.montant });
+    }
+    return lignes;
+  }, []);
+
+  // ── Score de santé associative ──────────────────────────────────────────
+
+  const calculateScoreSante = useCallback((): ScoreSante => {
+    const txs = data.transactions;
+    const recettes = txs.filter(t => t.type !== 'depense').reduce((s, t) => s + t.montant, 0);
+    const depenses = txs.filter(t => t.type === 'depense').reduce((s, t) => s + t.montant, 0);
+    const solde = recettes - depenses;
+    const tresorerie = data.actifs.filter(a => a.type === 'tresorerie').reduce((s, a) => s + a.valeur, 0);
+
+    const adherents = data.persons.filter(p => p.type === 'adherent');
+    const anneeActuelle = new Date().getFullYear();
+    const adherentsFideles = adherents.filter(a => {
+      if (!a.dateDerniereCotisation) return false;
+      return new Date(a.dateDerniereCotisation).getFullYear() >= anneeActuelle - 1;
+    });
+    const tauxFidelisation = adherents.length > 0 ? adherentsFideles.length / adherents.length : 0;
+
+    const now = new Date();
+    const moisCourant = txs.filter(t => {
+      const d = new Date(t.date);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+    const aDesActivitesCeMois = data.participations.some(p => {
+      const d = new Date(p.date);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+
+    const ratioDepenses = recettes > 0 ? depenses / recettes : 1;
+    const subventionsEnCours = data.subventions.filter(s => s.statut === 'en_cours').length;
+
+    const criteres = [
+      {
+        nom: 'Trésorerie positive',
+        valeur: solde >= 0 && tresorerie >= 0,
+        poids: 25,
+        score: (solde >= 0 && tresorerie >= 0) ? 25 : 0,
+        suggestion: solde < 0 ? 'Les dépenses dépassent les recettes. Réduisez les charges ou augmentez les recettes.' : undefined,
+      },
+      {
+        nom: 'Taux de renouvellement > 70%',
+        valeur: tauxFidelisation >= 0.7,
+        poids: 20,
+        score: tauxFidelisation >= 0.7 ? 20 : Math.round(tauxFidelisation * 20),
+        suggestion: tauxFidelisation < 0.7 ? 'Relancez les adhérents non renouvelés avec un message personnalisé.' : undefined,
+      },
+      {
+        nom: 'Activités ce mois',
+        valeur: aDesActivitesCeMois || moisCourant.length > 0,
+        poids: 15,
+        score: (aDesActivitesCeMois || moisCourant.length > 0) ? 15 : 0,
+        suggestion: !aDesActivitesCeMois ? 'Aucune activité ce mois. Planifiez un atelier ou un événement.' : undefined,
+      },
+      {
+        nom: 'Subventions en cours',
+        valeur: subventionsEnCours > 0 || data.subventions.some(s => s.statut === 'obtenue'),
+        poids: 15,
+        score: (subventionsEnCours > 0 || data.subventions.some(s => s.statut === 'obtenue')) ? 15 : 0,
+        suggestion: subventionsEnCours === 0 ? 'Déposez des dossiers de subvention auprès de votre mairie ou région.' : undefined,
+      },
+      {
+        nom: 'Ratio dépenses/recettes < 80%',
+        valeur: ratioDepenses < 0.8,
+        poids: 25,
+        score: ratioDepenses < 0.8 ? 25 : ratioDepenses < 1 ? Math.round((1 - ratioDepenses) * 25 * 2) : 0,
+        suggestion: ratioDepenses >= 0.8 ? `Ratio actuel : ${Math.round(ratioDepenses * 100)}%. Optimisez vos charges.` : undefined,
+      },
+    ];
+
+    const score = criteres.reduce((s, c) => s + c.score, 0);
+    const niveau: ScoreSante['niveau'] = score >= 70 ? 'ok' : score >= 40 ? 'warning' : 'danger';
+
+    return { score, niveau, criteres };
+  }, [data]);
+
+  // ── Projection de trésorerie ────────────────────────────────────────────
+
+  const calculateProjectionTresorerie = useCallback((): ProjectionTresorerie[] => {
+    const now = new Date();
+    const txs = data.transactions;
+
+    // Calculer la moyenne des 6 derniers mois
+    const moyennes = Array.from({ length: 6 }, (_, i) => {
+      const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+      const moisTxs = txs.filter(t => {
+        const td = new Date(t.date);
+        return td.getMonth() === d.getMonth() && td.getFullYear() === d.getFullYear();
+      });
+      return {
+        recettes: moisTxs.filter(t => t.type !== 'depense').reduce((s, t) => s + t.montant, 0),
+        depenses: moisTxs.filter(t => t.type === 'depense').reduce((s, t) => s + t.montant, 0),
+      };
+    });
+
+    const moyRec = moyennes.reduce((s, m) => s + m.recettes, 0) / 6;
+    const moyDep = moyennes.reduce((s, m) => s + m.depenses, 0) / 6;
+
+    const tresorerieActuelle = data.actifs.filter(a => a.type === 'tresorerie').reduce((s, a) => s + a.valeur, 0);
+    const soldeActuel = txs.filter(t => t.type !== 'depense').reduce((s, t) => s + t.montant, 0)
+      - txs.filter(t => t.type === 'depense').reduce((s, t) => s + t.montant, 0);
+    let soldeRef = tresorerieActuelle || soldeActuel;
+
+    return Array.from({ length: 6 }, (_, i) => {
+      const date = new Date(now.getFullYear(), now.getMonth() + i + 1, 1);
+      const moisLabel = date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+
+      const evtsMois = data.evenementsPrev.filter(e => {
+        const ed = new Date(e.date);
+        return ed.getMonth() === date.getMonth() && ed.getFullYear() === date.getFullYear();
+      });
+
+      const recEvts = evtsMois.filter(e => e.type === 'recette').reduce((s, e) => s + e.montant, 0);
+      const depEvts = evtsMois.filter(e => e.type === 'depense').reduce((s, e) => s + e.montant, 0);
+
+      const recTotal = moyRec + recEvts;
+      const depTotal = moyDep + depEvts;
+      soldeRef = soldeRef + recTotal - depTotal;
+
+      return {
+        mois: moisLabel,
+        soldePrevu: Math.round(soldeRef),
+        recettesPrevisionnelles: Math.round(recTotal),
+        depensesPrevisionnelles: Math.round(depTotal),
+        evenements: evtsMois,
+      };
+    });
+  }, [data]);
+
+  const addSessionMentorat = useCallback((s: Omit<SessionMentorat, 'id'>): SessionMentorat => {
+    const nouveau = { ...s, id: uuidv4() };
+    setData(prev => ({ ...prev, sessionsMentorat: [...prev.sessionsMentorat, nouveau] }));
+    return nouveau;
+  }, []);
+
+  const updateSessionMentorat = useCallback((id: string, updates: Partial<SessionMentorat>) => {
+    setData(prev => ({
+      ...prev,
+      sessionsMentorat: prev.sessionsMentorat.map(s => s.id === id ? { ...s, ...updates } : s),
+    }));
+  }, []);
+
+  const deleteSessionMentorat = useCallback((id: string) => {
+    setData(prev => ({ ...prev, sessionsMentorat: prev.sessionsMentorat.filter(s => s.id !== id) }));
+  }, []);
+
   return {
     data,
     isLoaded,
@@ -605,5 +825,22 @@ export function useDataStore() {
     calculateAlertes,
     getTransactionsByPeriod,
     getTransactionsByYear,
+    ecritures: data.ecritures,
+    addEcriture,
+    deleteEcriture,
+    genererEcritureDepuisTransaction,
+    evenementsPrev: data.evenementsPrev,
+    addEvenementPrev,
+    deleteEvenementPrev,
+    kpisCustom: data.kpisCustom,
+    addKPICustom,
+    updateKPICustom,
+    deleteKPICustom,
+    calculateScoreSante,
+    calculateProjectionTresorerie,
+    sessionsMentorat: data.sessionsMentorat,
+    addSessionMentorat,
+    updateSessionMentorat,
+    deleteSessionMentorat,
   };
 }

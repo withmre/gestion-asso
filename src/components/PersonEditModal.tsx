@@ -5,9 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
 import type { Person, PersonType, TarifAdhesion } from '@/types';
-import { X } from 'lucide-react';
+
 
 interface PersonEditModalProps {
   person: Person | null;
@@ -27,8 +26,7 @@ export function PersonEditModal({ person, isOpen, onClose, onSave, tarifsAdhesio
   const [nombreActivitesDiscord, setNombreActivitesDiscord] = useState('');
   const [estAJourCotisation, setEstAJourCotisation] = useState(false);
   const [tarifAdhesionId, setTarifAdhesionId] = useState('');
-  const [certifications, setCertifications] = useState<string[]>([]);
-  const [newCertification, setNewCertification] = useState('');
+  const [roleMentorat, setRoleMentorat] = useState<Person['roleMentorat']>(null);
 
   useEffect(() => {
     if (person) {
@@ -41,7 +39,7 @@ export function PersonEditModal({ person, isOpen, onClose, onSave, tarifsAdhesio
       setNombreActivitesDiscord(person.kpiDiscord?.nombreActivites.toString() || '');
       setEstAJourCotisation(person.estAJourCotisation);
       setTarifAdhesionId(person.tarifAdhesionId || '');
-      setCertifications(person.certifications || []);
+      setRoleMentorat(person.roleMentorat || null);
     }
   }, [person]);
 
@@ -56,7 +54,7 @@ export function PersonEditModal({ person, isOpen, onClose, onSave, tarifsAdhesio
       telephone: telephone.trim() || undefined,
       estAJourCotisation,
       tarifAdhesionId: tarifAdhesionId || undefined,
-      certifications: certifications.length > 0 ? certifications : undefined
+      roleMentorat: roleMentorat || null,
     };
 
     if (idDiscord.trim()) {
@@ -73,16 +71,6 @@ export function PersonEditModal({ person, isOpen, onClose, onSave, tarifsAdhesio
     onClose();
   };
 
-  const addCertification = () => {
-    if (newCertification.trim() && !certifications.includes(newCertification.trim())) {
-      setCertifications([...certifications, newCertification.trim()]);
-      setNewCertification('');
-    }
-  };
-
-  const removeCertification = (cert: string) => {
-    setCertifications(certifications.filter(c => c !== cert));
-  };
 
   if (!person) return null;
 
@@ -130,7 +118,7 @@ export function PersonEditModal({ person, isOpen, onClose, onSave, tarifsAdhesio
           </div>
 
           <div className="border-t pt-4">
-            <h4 className="text-sm font-medium text-gray-700 mb-3">Discord</h4>
+            <h4 className="text-sm font-medium text-foreground mb-3">Discord</h4>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>ID Discord</Label>
@@ -145,7 +133,7 @@ export function PersonEditModal({ person, isOpen, onClose, onSave, tarifsAdhesio
 
           {type === 'adherent' && (
             <div className="border-t pt-4">
-              <h4 className="text-sm font-medium text-gray-700 mb-3">Adhésion</h4>
+              <h4 className="text-sm font-medium text-foreground mb-3">Adhésion</h4>
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <Checkbox checked={estAJourCotisation} onCheckedChange={(c) => setEstAJourCotisation(c as boolean)} />
@@ -171,29 +159,20 @@ export function PersonEditModal({ person, isOpen, onClose, onSave, tarifsAdhesio
           )}
 
           <div className="border-t pt-4">
-            <h4 className="text-sm font-medium text-gray-700 mb-3">Certifications</h4>
-            <div className="flex gap-2 mb-3">
-              <Input 
-                value={newCertification} 
-                onChange={(e) => setNewCertification(e.target.value)} 
-                placeholder="e.g., OSCP, CEH, eJPT"
-                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCertification())}
-              />
-              <Button type="button" onClick={addCertification} variant="outline">Ajouter</Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {certifications.map(cert => (
-                <Badge key={cert} variant="secondary" className="flex items-center gap-1">
-                  {cert}
-                  <button onClick={() => removeCertification(cert)} className="hover:text-red-500">
-                    <X className="h-3 w-3" />
-                  </button>
-                </Badge>
-              ))}
-            </div>
+            <h4 className="text-sm font-medium text-foreground mb-3">Rôle mentorat</h4>
+            <select
+              value={roleMentorat || ''}
+              onChange={e => setRoleMentorat((e.target.value as Person['roleMentorat']) || null)}
+              className="w-full px-3 py-2 border border-border rounded-md text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="">Aucun rôle</option>
+              <option value="mentor">Mentor</option>
+              <option value="apprenti">Apprenti</option>
+              <option value="les_deux">Mentor et Apprenti</option>
+            </select>
           </div>
 
-          <Button onClick={handleSubmit} className="w-full bg-slate-700 hover:bg-slate-800">
+          <Button onClick={handleSubmit} className="w-full bg-primary hover:bg-primary/90">
             Enregistrer les modifications
           </Button>
         </div>

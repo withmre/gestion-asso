@@ -21,7 +21,7 @@ const typesPartenaire: { value: PartenaireType; label: string; color: string }[]
   { value: 'technique', label: 'Technique', color: 'bg-blue-100 text-blue-700' },
   { value: 'financier', label: 'Financier', color: 'bg-green-100 text-green-700' },
   { value: 'media', label: 'Média', color: 'bg-purple-100 text-purple-700' },
-  { value: 'autre', label: 'Autre', color: 'bg-gray-100 text-gray-700' }
+  { value: 'autre', label: 'Autre', color: 'bg-muted text-foreground' }
 ];
 
 export function PartenairesPage({ partenaires, onAdd, onUpdate, onDelete }: PartenairesPageProps) {
@@ -111,8 +111,8 @@ export function PartenairesPage({ partenaires, onAdd, onUpdate, onDelete }: Part
   return (
     <div className="space-y-6">
       {/* Header avec filtres */}
-      <Card className="border border-gray-200 shadow-sm">
-        <CardHeader className="bg-gray-50 border-b border-gray-200">
+      <Card className="border border-border shadow-sm">
+        <CardHeader className="bg-muted/50 border-b border-border">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
               <Handshake className="h-5 w-5 text-indigo-500" />
@@ -120,7 +120,7 @@ export function PartenairesPage({ partenaires, onAdd, onUpdate, onDelete }: Part
             </CardTitle>
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
                 <Input
                   placeholder="Rechercher..."
                   value={searchTerm}
@@ -142,7 +142,7 @@ export function PartenairesPage({ partenaires, onAdd, onUpdate, onDelete }: Part
               </Select>
               <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-slate-700 hover:bg-slate-800">
+                  <Button className="bg-primary hover:bg-primary/90">
                     <Plus className="h-4 w-4 mr-2" />
                     Ajouter
                   </Button>
@@ -185,16 +185,16 @@ export function PartenairesPage({ partenaires, onAdd, onUpdate, onDelete }: Part
 
                     <div className="space-y-2">
                       <Label>Site web</Label>
-                      <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://exemple.fr"/>
+                      <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://exemple.fr"
                     </div>
 
                     <div className="space-y-2">
                       <Label>URL du logo</Label>
-                      <Input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://exemple.fr"/>
+                      <Input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://exemple.fr"
                     </div>
 
                     <div className="border-t pt-4">
-                      <h4 className="text-sm font-medium text-gray-700 mb-3">Contact</h4>
+                      <h4 className="text-sm font-medium text-foreground mb-3">Contact</h4>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label>Nom</Label>
@@ -216,7 +216,7 @@ export function PartenairesPage({ partenaires, onAdd, onUpdate, onDelete }: Part
                       <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Informations complémentaires..." />
                     </div>
 
-                    <Button onClick={handleSubmit} className="w-full bg-slate-700 hover:bg-slate-800">
+                    <Button onClick={handleSubmit} className="w-full bg-primary hover:bg-primary/90">
                       {editingPartenaire ? 'Enregistrer les modifications' : 'Créer le partenaire'}
                     </Button>
                   </div>
@@ -230,18 +230,18 @@ export function PartenairesPage({ partenaires, onAdd, onUpdate, onDelete }: Part
       {/* Liste des partenaires */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredPartenaires.length === 0 ? (
-          <div className="col-span-full text-center py-8 text-gray-500 bg-white rounded-lg border border-gray-200">
+          <div className="col-span-full text-center py-8 text-muted-foreground bg-card rounded-lg border border-border">
             Aucun partenaire trouvé
           </div>
         ) : (
           filteredPartenaires.map((partenaire) => {
             const typeConfig = typesPartenaire.find(t => t.value === partenaire.type);
             return (
-              <Card key={partenaire.id} className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+              <Card key={partenaire.id} className="border border-border shadow-sm hover:shadow-md transition-shadow">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h3 className="font-semibold text-gray-900">{partenaire.nom}</h3>
+                      <h3 className="font-semibold text-foreground">{partenaire.nom}</h3>
                       <Badge className={typeConfig?.color || ''}>
                         {typeConfig?.label}
                       </Badge>
@@ -264,19 +264,19 @@ export function PartenairesPage({ partenaires, onAdd, onUpdate, onDelete }: Part
                   </div>
 
                   {partenaire.valeurApport !== undefined && (
-                    <p className="text-sm text-gray-600 mb-2">
+                    <p className="text-sm text-muted-foreground mb-2">
                       Apport : <span className="font-medium">{formatCurrency(partenaire.valeurApport)}</span>
                     </p>
                   )}
 
                   {partenaire.dateDebutPartenariat && (
-                    <p className="text-sm text-gray-500 mb-2">
+                    <p className="text-sm text-muted-foreground mb-2">
                       Depuis le {new Date(partenaire.dateDebutPartenariat).toLocaleDateString('fr-FR')}
                     </p>
                   )}
 
                   {partenaire.contactNom && (
-                    <p className="text-sm text-gray-600 mb-1">{partenaire.contactNom}</p>
+                    <p className="text-sm text-muted-foreground mb-1">{partenaire.contactNom}</p>
                   )}
 
                   <div className="flex gap-2 mt-3">
