@@ -48,7 +48,7 @@ export function PersonList({ persons, tarifsAdhesion, onDelete, onEdit }: Person
         p.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
         p.prenom.toLowerCase().includes(searchTerm.toLowerCase()) ||
         p.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.kpiDiscord?.idDiscord.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.kpiDiscord?.idDiscord.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesType = typeFilter === 'all' || p.type === typeFilter;
       return matchesSearch && matchesType;
