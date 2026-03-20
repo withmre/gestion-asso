@@ -249,3 +249,9 @@ export interface PaginationState {
   pageSize: number;
   total: number;
 }
+
+export interface DiscordKPIData {
+  idDiscord: string;
+  nombreActivites: number;
+  derniereActivite?: string;
+}

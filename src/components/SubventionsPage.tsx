@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import type { Subvention, SubventionStatut } from '@/types';
-import { FileText, Plus, Trash2, Edit, Search, Filter, Download, Euro } from 'lucide-react';
+import { FileText, Plus, Trash2, Edit, Search, Filter, Download } from 'lucide-react';
 
 interface SubventionsPageProps {
   subventions: Subvention[];

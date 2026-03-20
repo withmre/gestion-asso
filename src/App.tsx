@@ -389,7 +389,6 @@ function App() {
             <Dashboard
               kpiPersonnes={kpiPersonnes}
               kpiFinances={kpiFinances}
-              kpiBilan={kpiBilan}
               kpiCTF={kpiCTF}
               kpiSubventions={kpiSubventions}
               selectedYear={selectedYear}
@@ -402,7 +401,7 @@ function App() {
             <h2 className="text-2xl font-bold text-gray-900">Gestion des personnes</h2>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-1 space-y-6">
-                <PersonForm onSubmit={handleAddPerson} />
+                <PersonForm tarifsAdhesion={params.tarifsAdhesion} onSubmit={handleAddPerson} />
                 <HelloAssoImport persons={persons} onImport={handleHelloAssoImport} />
               </div>
               <div className="lg:col-span-2">

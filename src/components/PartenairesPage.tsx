@@ -4,12 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import type { Partenaire, PartenaireType } from '@/types';
-import { Handshake, Plus, Trash2, Edit, Search, Filter, ExternalLink, Mail, Phone } from 'lucide-react';
+import { Handshake, Plus, Trash2, Edit, Search, Filter, ExternalLink, Mail } from 'lucide-react';
 
 interface PartenairesPageProps {
   partenaires: Partenaire[];
@@ -186,12 +185,12 @@ export function PartenairesPage({ partenaires, onAdd, onUpdate, onDelete }: Part
 
                     <div className="space-y-2">
                       <Label>Site web</Label>
-                      <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://exemple.fr"/>
+                      <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://exemple.fr"
                     </div>
 
                     <div className="space-y-2">
                       <Label>URL du logo</Label>
-                      <Input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://exemple.fr"/>
+                      <Input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://exemple.fr"
                     </div>
 
                     <div className="border-t pt-4">

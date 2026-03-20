@@ -58,7 +58,7 @@ export function DiscordImport({ persons, onImport }: DiscordImportProps) {
     reader.readAsText(file);
   };
 
-  const personsWithDiscord = persons.filter(p => p.idDiscord);
+  const personsWithDiscord = persons.filter(p => p.kpiDiscord?.idDiscord);
 
   return (
     <Card className="border border-gray-200 shadow-sm">
@@ -127,7 +127,7 @@ export function DiscordImport({ persons, onImport }: DiscordImportProps) {
             <p className="text-sm font-medium text-gray-700 mb-2">Aperçu des données détectées :</p>
             <div className="bg-gray-50 rounded-lg p-3 space-y-2 max-h-40 overflow-y-auto">
               {preview.map((data, index) => {
-                const matchedPerson = persons.find(p => p.idDiscord === data.idDiscord);
+                const matchedPerson = persons.find(p => p.kpiDiscord?.idDiscord === data.idDiscord);
                 return (
                   <div key={index} className="text-sm flex items-center gap-2">
                     <span className="font-mono text-xs text-gray-500">{data.idDiscord.substring(0, 8)}...</span>

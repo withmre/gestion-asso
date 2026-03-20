@@ -3,8 +3,6 @@ import * as XLSX from 'xlsx';
 import type {
   Transaction,
   Person,
-  Participation,
-  Subvention,
   VenteSousCategorie,
   DepenseCategorie,
   DataStore,

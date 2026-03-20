@@ -1,18 +1,16 @@
-import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { KPIPersonnes, KPIFinances, KPIBilan, KPICTF, KPISubventions } from '@/types';
+import type { KPIPersonnes, KPIFinances, KPICTF, KPISubventions } from '@/types';
 import { 
-  PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, 
-  CartesianGrid, Tooltip as RechartsTooltip, Legend, LineChart, Line, AreaChart, Area
+  PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis,
+  CartesianGrid, Tooltip as RechartsTooltip, Legend, LineChart, Line
 } from 'recharts';
-import { Users, TrendingUp, DollarSign, Activity, HelpCircle, TrendingDown, Wallet, Trophy, FileText, Award } from 'lucide-react';
+import { Users, TrendingUp, DollarSign, HelpCircle, TrendingDown, Wallet, Trophy, FileText, Award } from 'lucide-react';
 
 interface DashboardProps {
   kpiPersonnes: KPIPersonnes;
   kpiFinances: KPIFinances;
-  kpiBilan: KPIBilan;
   kpiCTF: KPICTF;
   kpiSubventions: KPISubventions;
   selectedYear: number;
@@ -57,7 +55,7 @@ function KPICard({ title, value, icon: Icon, iconColor, tooltip, trend }: {
   );
 }
 
-export function Dashboard({ kpiPersonnes, kpiFinances, kpiBilan, kpiCTF, kpiSubventions, selectedYear, onYearChange }: DashboardProps) {
+export function Dashboard({ kpiPersonnes, kpiFinances, kpiCTF, kpiSubventions, selectedYear, onYearChange }: DashboardProps) {
   const repartitionData = [
     { name: 'Adhésions', value: kpiFinances.repartitionRevenus.adhesions },
     { name: 'Dons', value: kpiFinances.repartitionRevenus.dons },
@@ -73,11 +71,6 @@ export function Dashboard({ kpiPersonnes, kpiFinances, kpiBilan, kpiCTF, kpiSubv
     { name: 'Autres', value: kpiFinances.repartitionDepenses.autres },
   ].filter(d => d.value > 0);
 
-  const ventesData = [
-    { name: 'Formations', montant: kpiFinances.caDetailleVentes.formations },
-    { name: 'Événementiel', montant: kpiFinances.caDetailleVentes.evenementiel },
-    { name: 'Vêtements', montant: kpiFinances.caDetailleVentes.vetements },
-  ].filter(d => d.montant > 0);
 
   const formatCurrency = (value: number) => 
     new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(value);

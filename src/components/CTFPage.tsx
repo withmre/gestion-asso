@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import type { CTFEvent, Person, CTFPlateforme, CTFType } from '@/types';
-import { Trophy, Users, Calendar, Plus, Trash2, Edit, Search, Filter } from 'lucide-react';
+import { Trophy, Users, Plus, Trash2, Edit, Search, Filter } from 'lucide-react';
 
 interface CTFPageProps {
   ctfEvents: CTFEvent[];
@@ -114,15 +114,6 @@ export function CTFPage({ ctfEvents, persons, onAdd, onUpdate, onDelete }: CTFPa
     );
   };
 
-  const getParticipantNames = (participantIds: string[]) => {
-    return participantIds
-      .map(id => {
-        const p = persons.find(person => person.id === id);
-        return p ? `${p.prenom} ${p.nom}` : null;
-      })
-      .filter(Boolean)
-      .join(', ');
-  };
 
   return (
     <div className="space-y-6">

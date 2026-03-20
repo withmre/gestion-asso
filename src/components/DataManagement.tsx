@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Download, Upload, FileSpreadsheet, AlertTriangle, Settings, Building2, Calendar } from 'lucide-react';
+import { Download, Upload, FileSpreadsheet, AlertTriangle, Building2, Calendar } from 'lucide-react';
 import type { AssociationParams, TypeAdhesion } from '@/types';
 
 interface DataManagementProps {
