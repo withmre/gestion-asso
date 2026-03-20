@@ -74,3 +74,5 @@ Puis dans les Settings de votre repo GitHub :
 
 Toutes les donnees sont stockees dans le localStorage de votre navigateur.
 **Pensez a exporter regulierement vos donnees** depuis la page Parametres.
+
+Développé et pensé pour des besoins spécifiques, peut ne pas convenir à tout usage.
