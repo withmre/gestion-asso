@@ -78,7 +78,7 @@ export function ParticipationList({ participations, persons, onDelete, onEdit }:
       <CardHeader className="bg-muted/50 border-b border-border">
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
               <Calendar className="h-5 w-5" />
               Liste des participations ({participations.length})
             </CardTitle>
@@ -96,7 +96,7 @@ export function ParticipationList({ participations, persons, onDelete, onEdit }:
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="px-3 py-2 border border-border rounded-md text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <option value="all">Tous les types</option>
               <option value="formation">Formations</option>
@@ -143,7 +143,7 @@ export function ParticipationList({ participations, persons, onDelete, onEdit }:
                       {getPersonName(participation.personId)}
                     </TableCell>
                     <TableCell>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${typeColors[participation.activiteType] || 'bg-muted text-gray-800'}`}>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${typeColors[participation.activiteType] || 'bg-muted text-foreground'}`}>
                         {typeLabels[participation.activiteType] || participation.activiteType}
                       </span>
                     </TableCell>
