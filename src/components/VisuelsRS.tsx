@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Image, Download, Instagram, Linkedin, RefreshCw } from 'lucide-react';
 import type { KPIFinances, KPIPersonnes, CTFEvent, AssociationParams, ScoreSante } from '@/types';
 
@@ -30,6 +31,18 @@ const THEMES_COULEURS = [
   { id: 'marine',  label: 'Marine',            fond: '#1E3A5F', accent: '#FFFFFF', texte: '#FFFFFF' },
   { id: 'vert',    label: 'Vert sauge',        fond: '#1A2F1E', accent: '#4A7C59', texte: '#E8F5E9' },
   { id: 'clair',   label: 'Clair professionnel', fond: '#F8FAFC', accent: '#1E3A5F', texte: '#1F2937' },
+];
+
+
+const STATS_DISPONIBLES = [
+  { id: 'chiffreAffaires',   label: 'Chiffre d\'affaires' },
+  { id: 'depenses',          label: 'Dépenses' },
+  { id: 'solde',             label: 'Solde net' },
+  { id: 'adherents',         label: 'Adhérents actifs' },
+  { id: 'membres',           label: 'Membres' },
+  { id: 'tauxConversion',    label: 'Taux de conversion' },
+  { id: 'panierMoyen',       label: 'Panier moyen' },
+  { id: 'scoreSante',        label: 'Score santé' },
 ];
 
 
@@ -85,6 +98,20 @@ export function VisuelsRS({ kpiFinances, kpiPersonnes, ctfEvents, scoreSante, pa
   const [ctfId, setCtfId] = useState(ctfEvents[0]?.id || '');
   const previewRef = useRef<HTMLCanvasElement>(null);
   const [generated, setGenerated] = useState(false);
+  const [titreVisuel, setTitreVisuel] = useState('BILAN DU MOIS');
+  const [statsChoisies, setStatsChoisies] = useState<string[]>(['chiffreAffaires', 'depenses', 'solde', 'adherents']);
+
+  const toggleStat = (id: string) => {
+    setStatsChoisies(prev => {
+      if (prev.includes(id)) {
+        if (prev.length <= 1) return prev; // toujours au moins 1
+        return prev.filter(s => s !== id);
+      }
+      if (prev.length >= 4) return prev; // max 4
+      return [...prev, id];
+    });
+    setGenerated(false);
+  };
 
   const theme = THEMES_COULEURS.find(t => t.id === themeId) || THEMES_COULEURS[0];
   const { w, h } = FORMATS[format];
@@ -115,19 +142,24 @@ export function VisuelsRS({ kpiFinances, kpiPersonnes, ctfEvents, scoreSante, pa
       ctx.font = `bold ${w * 0.045}px sans-serif`;
       ctx.fillStyle = texte;
       ctx.textAlign = 'center';
-      ctx.fillText('BILAN DU MOIS', cx, h * 0.18);
+      ctx.fillText(titreVisuel || 'BILAN DU MOIS', cx, h * 0.18);
 
       ctx.font = `${w * 0.028}px sans-serif`;
       ctx.fillStyle = accent;
       ctx.fillText(moisLabel.toUpperCase(), cx, h * 0.24);
 
-      // Stats en grille
-      const stats = [
-        { label: 'Chiffre d\'affaires', val: formatMonnaie(kpiFinances.chiffreAffairesTotal) },
-        { label: 'Dépenses', val: formatMonnaie(kpiFinances.totalDepenses) },
-        { label: 'Solde net', val: formatMonnaie(kpiFinances.soldeReel) },
-        { label: 'Adhérents actifs', val: kpiPersonnes.totalAdherents.toString() },
-      ];
+      // Stats en grille — dynamique selon sélection
+      const statsMap: Record<string, { label: string; val: string }> = {
+        chiffreAffaires: { label: 'Chiffre d\'affaires', val: formatMonnaie(kpiFinances.chiffreAffairesTotal) },
+        depenses:        { label: 'Dépenses',            val: formatMonnaie(kpiFinances.totalDepenses) },
+        solde:           { label: 'Solde net',           val: formatMonnaie(kpiFinances.soldeReel) },
+        adherents:       { label: 'Adhérents actifs',    val: kpiPersonnes.totalAdherents.toString() },
+        membres:         { label: 'Membres',             val: kpiPersonnes.totalMembres.toString() },
+        tauxConversion:  { label: 'Taux conversion',     val: kpiPersonnes.tauxConversion.toFixed(1) + '%' },
+        panierMoyen:     { label: 'Panier moyen',        val: formatMonnaie(kpiFinances.panierMoyen) },
+        scoreSante:      { label: 'Score santé',         val: scoreSante.score.toString() + '/100' },
+      };
+      const stats = statsChoisies.map(id => statsMap[id] || statsMap['chiffreAffaires']);
 
       const cols = format === 'story' ? 2 : 2;
       const rows = Math.ceil(stats.length / cols);
@@ -285,7 +317,7 @@ export function VisuelsRS({ kpiFinances, kpiPersonnes, ctfEvents, scoreSante, pa
     ctx.fillText(hashtags, cx, hashY);
 
     setGenerated(true);
-  }, [format, typeVisuel, themeId, hashtags, ctfId, kpiFinances, kpiPersonnes, ctfEvents, scoreSante, params]);
+  }, [format, typeVisuel, themeId, hashtags, ctfId, titreVisuel, statsChoisies, kpiFinances, kpiPersonnes, ctfEvents, scoreSante, params]);
 
   const telecharger = () => {
     const canvas = previewRef.current;
@@ -329,6 +361,37 @@ export function VisuelsRS({ kpiFinances, kpiPersonnes, ctfEvents, scoreSante, pa
                   </SelectContent>
                 </Select>
               </div>
+
+              {typeVisuel === 'bilan_mois' && (
+                <>
+                  <div className="space-y-1.5">
+                    <Label>Titre du visuel</Label>
+                    <input
+                      type="text"
+                      value={titreVisuel}
+                      onChange={e => { setTitreVisuel(e.target.value); setGenerated(false); }}
+                      placeholder="BILAN DU MOIS"
+                      className="w-full px-3 py-2 rounded-md border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Stats affichées <span className="text-xs text-muted-foreground ml-1">(max 4)</span></Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {STATS_DISPONIBLES.map(s => (
+                        <label key={s.id} className="flex items-center gap-2 cursor-pointer p-2 rounded-md border border-border hover:bg-muted/50 transition-colors">
+                          <Checkbox
+                            checked={statsChoisies.includes(s.id)}
+                            onCheckedChange={() => toggleStat(s.id)}
+                            disabled={!statsChoisies.includes(s.id) && statsChoisies.length >= 4}
+                          />
+                          <span className="text-xs text-foreground">{s.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground">{statsChoisies.length}/4 sélectionnées</p>
+                  </div>
+                </>
+              )}
 
               {typeVisuel === 'ctf_resultat' && ctfEvents.length > 0 && (
                 <div className="space-y-1.5">
