@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookOpen, CheckCircle, AlertTriangle, Search, Trash2, Zap } from 'lucide-react';
-import type { EcritureComptable, Transaction } from '@/types';
+import type { EcritureComptable, Transaction, Person } from '@/types';
 
 const COMPTES_PCA: Record<string, string> = {
   '101': 'Fonds associatifs',
@@ -50,6 +50,7 @@ const JOURNAUX: Record<string, string> = {
 interface ComptabiliteDoubleProps {
   ecritures: EcritureComptable[];
   transactions: Transaction[];
+  persons: Person[];
   onDelete: (id: string) => void;
   onGenererDepuisTransactions: () => void;
 }
@@ -57,6 +58,7 @@ interface ComptabiliteDoubleProps {
 export function ComptabiliteDouble({
   ecritures,
   transactions,
+  persons,
   onDelete,
   onGenererDepuisTransactions,
 }: ComptabiliteDoubleProps) {
@@ -64,7 +66,7 @@ export function ComptabiliteDouble({
   const [journalFilter, setJournalFilter] = useState<string>('all');
 
   const formatCurrency = (v: number) =>
-    v === 0 ? '—' : new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(v);
+    v === 0 ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(v);
 
   const filtered = useMemo(() =>
     ecritures.filter(e => {
@@ -106,7 +108,7 @@ export function ComptabiliteDouble({
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           {equilibree
-            ? <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 flex items-center gap-1"><CheckCircle className="h-3.5 w-3.5" />Balance équilibrée</Badge>
+            ? <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 dark:bg-green-900/30 dark:text-green-400 flex items-center gap-1"><CheckCircle className="h-3.5 w-3.5" />Balance équilibrée</Badge>
             : <Badge className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 flex items-center gap-1"><AlertTriangle className="h-3.5 w-3.5" />Balance déséquilibrée</Badge>
           }
           <span className="text-sm text-muted-foreground">{ecritures.length} écriture{ecritures.length > 1 ? 's' : ''}</span>
@@ -143,7 +145,7 @@ export function ComptabiliteDouble({
             >
               <option value="all">Tous les journaux</option>
               {Object.entries(JOURNAUX).map(([code, label]) => (
-                <option key={code} value={code}>{code} — {label}</option>
+                <option key={code} value={code}>{code} · {label}</option>
               ))}
             </select>
           </div>
@@ -185,8 +187,8 @@ export function ComptabiliteDouble({
                             <tr key={i} className={i % 2 === 0 ? '' : 'bg-muted/20'}>
                               <td className="py-1 font-mono text-muted-foreground">{ligne.compte}</td>
                               <td className="py-1 text-foreground">{COMPTES_PCA[ligne.compte] || ligne.libelle}</td>
-                              <td className="py-1 text-right font-medium text-green-600 dark:text-green-400">{ligne.debit > 0 ? formatCurrency(ligne.debit) : '—'}</td>
-                              <td className="py-1 text-right font-medium text-red-600 dark:text-red-400">{ligne.credit > 0 ? formatCurrency(ligne.credit) : '—'}</td>
+                              <td className="py-1 text-right font-medium text-green-600 dark:text-green-400">{ligne.debit > 0 ? formatCurrency(ligne.debit) : '-'}</td>
+                              <td className="py-1 text-right font-medium text-red-600 dark:text-red-400">{ligne.credit > 0 ? formatCurrency(ligne.credit) : '-'}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -209,7 +211,7 @@ export function ComptabiliteDouble({
                   <span className="text-muted-foreground">Total débits : <span className="font-medium text-foreground">{formatCurrency(totalDebits)}</span></span>
                   <span className="text-muted-foreground">Total crédits : <span className="font-medium text-foreground">{formatCurrency(totalCredits)}</span></span>
                   {equilibree
-                    ? <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Équilibrée</Badge>
+                    ? <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 dark:bg-green-900/30 dark:text-green-400">Équilibrée</Badge>
                     : <Badge className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Déséquilibrée</Badge>
                   }
                 </div>
