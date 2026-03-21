@@ -66,7 +66,7 @@ export function ComptabiliteDouble({
   const [journalFilter, setJournalFilter] = useState<string>('all');
 
   const formatCurrency = (v: number) =>
-    v === 0 ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(v);
+    new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(v);
 
   const filtered = useMemo(() =>
     ecritures.filter(e => {
