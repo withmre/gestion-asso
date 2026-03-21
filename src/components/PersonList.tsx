@@ -91,7 +91,7 @@ export function PersonList({ persons, tarifsAdhesion, onDelete, onEdit }: Person
       <CardHeader className="bg-muted/50 border-b border-border">
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
               <User className="h-5 w-5" />
               Liste des personnes ({filteredPersons.length})
             </CardTitle>
@@ -156,9 +156,9 @@ export function PersonList({ persons, tarifsAdhesion, onDelete, onEdit }: Person
                     </TableCell>
                     <TableCell>
                       <Badge className={
-                        person.type === 'adherent' ? 'bg-blue-100 text-blue-800' :
-                        person.type === 'membre' ? 'bg-green-100 text-green-800' :
-                        'bg-muted text-gray-800'
+                        person.type === 'adherent' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                        person.type === 'membre' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                        'bg-muted text-foreground'
                       }>
                         {typeLabels[person.type]}
                       </Badge>
@@ -183,7 +183,7 @@ export function PersonList({ persons, tarifsAdhesion, onDelete, onEdit }: Person
                     </TableCell>
                     <TableCell>
                       {person.type === 'adherent' && (
-                        <Badge className={person.estAJourCotisation ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                        <Badge className={person.estAJourCotisation ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'}>
                           {person.estAJourCotisation ? 'À jour' : 'Non à jour'}
                         </Badge>
                       )}
