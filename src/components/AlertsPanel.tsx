@@ -57,7 +57,7 @@ export function AlertsPanel({ alertes }: AlertsPanelProps) {
         <CollapsibleTrigger asChild>
           <CardHeader className="bg-muted/50 border-b border-border cursor-pointer hover:bg-muted transition-colors">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+              <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-amber-500" />
                 Alertes & Rappels
                 <div className="flex gap-2 ml-2">
