@@ -63,14 +63,14 @@ export function DiscordImport({ persons, onImport }: DiscordImportProps) {
   return (
     <Card className="border border-border shadow-sm">
       <CardHeader className="bg-muted/50 border-b border-border">
-        <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+        <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
           <MessageSquare className="h-5 w-5" />
           Importer KPIs Discord (Draftbot)
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-6 space-y-4">
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <div className="flex items-center gap-2 text-blue-800 text-sm">
+          <div className="flex items-center gap-2 text-blue-700 dark:text-blue-300 text-sm">
             <Users className="h-4 w-4" />
             <span>
               <strong>{personsWithDiscord.length}</strong> membres ont un ID Discord enregistré
@@ -115,7 +115,7 @@ export function DiscordImport({ persons, onImport }: DiscordImportProps) {
         {result && (
           <Alert className="bg-green-50 border-green-200">
             <CheckCircle className="h-4 w-4 text-green-600" />
-            <AlertDescription className="text-green-800">
+            <AlertDescription className="text-green-700 dark:text-green-300">
               Import terminé ! <strong>{result.matched}</strong> membres correspondants,{' '}
               <strong>{result.unmatched}</strong> IDs Discord non trouvés.
             </AlertDescription>
