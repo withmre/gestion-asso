@@ -508,7 +508,7 @@ function App() {
   );
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="h-full bg-background flex">
       <Toaster position="top-right" richColors />
 
       {showOnboarding && (
@@ -532,7 +532,7 @@ function App() {
       />
 
       {/* Zone principale */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <WarningBanner hasSeenWarning={hasSeenWarning} onMarkAsSeen={markWarningAsSeen} />
 
         {/* Topbar */}
