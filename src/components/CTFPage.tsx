@@ -121,7 +121,7 @@ export function CTFPage({ ctfEvents, persons, onAdd, onUpdate, onDelete }: CTFPa
       <Card className="border border-border shadow-sm">
         <CardHeader className="bg-muted/50 border-b border-border">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
               <Trophy className="h-5 w-5 text-amber-500" />
               CTF & Compétitions ({ctfEvents.length})
             </CardTitle>
