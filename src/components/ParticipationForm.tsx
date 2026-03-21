@@ -41,7 +41,7 @@ export function ParticipationForm({ persons, onSubmit }: ParticipationFormProps)
   return (
     <Card className="border border-border shadow-sm">
       <CardHeader className="bg-muted/50 border-b border-border">
-        <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+        <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
           <Calendar className="h-5 w-5" />
           Nouvelle Participation
         </CardTitle>
