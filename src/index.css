@@ -69,23 +69,29 @@
   * {
     @apply border-border;
   }
+
   html {
     height: 100%;
   }
+
   body {
     @apply bg-background text-foreground;
     height: 100%;
   }
+
   #root {
     height: 100%;
     display: flex;
+    flex-direction: column;
   }
-  /* Selects natifs : forcer les couleurs du thème */
+
+  /* Selects natifs : couleurs du thème dans tous les modes */
   select {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     border-color: hsl(var(--border));
   }
+
   select option {
     background-color: hsl(var(--popover));
     color: hsl(var(--popover-foreground));
@@ -93,7 +99,7 @@
 }
 
 @layer utilities {
-  /* Scrollbar discrète sur la sidebar et le contenu principal */
+  /* Scrollbar discrète */
   .overflow-auto,
   .overflow-y-auto {
     scrollbar-width: thin;
