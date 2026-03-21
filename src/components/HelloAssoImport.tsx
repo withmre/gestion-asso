@@ -25,6 +25,7 @@ interface ParsedMember {
   telephone?: string;
   dateAdhesion: string;
   montant?: number;
+  discord?: string;
 }
 
 interface FieldChange {
@@ -47,25 +48,54 @@ interface PendingImport {
 function parseHelloAssoCSV(data: Record<string, string>[]): ParsedMember[] {
   const members: ParsedMember[] = [];
   for (const row of data) {
+    // Ignorer les commandes non validées
+    const statut = row['Statut de la commande'] || row['Statut'] || 'Validé';
+    if (statut && statut !== 'Validé' && statut !== 'Valide') continue;
+
+    // Email : format HelloAsso réel = "Email payeur", fallback formats anciens
     const email =
+      row['Email payeur'] ||
       row['Email'] || row['email'] || row['E-mail'] || row['Adresse email'] || '';
+
+    // Nom : format HelloAsso réel = "Nom adhérent", fallback
     const nom =
+      row['Nom adhérent'] || row['Nom adherent'] ||
       row['Nom'] || row['nom'] || row['LastName'] || '';
+
+    // Prénom : format HelloAsso réel = "Prénom adhérent", fallback
     const prenom =
+      row['Prénom adhérent'] || row['Prenom adherent'] ||
       row['Prenom'] || row['prenom'] || row['FirstName'] || row['Prénom'] || '';
 
     if (!email || (!nom && !prenom)) continue;
 
     const telephone =
       row['Telephone'] || row['telephone'] || row['Phone'] || row['Téléphone'] || '';
-    const dateAdhesion =
-      row["Date d'adhesion"] ||
-      row["Date d'adhésion"] ||
-      row['Date'] ||
-      row['date'] ||
-      new Date().toISOString().split('T')[0];
-    const montantStr = row['Montant'] || row['montant'] || row['Amount'] || '0';
+
+    // Date : format HelloAsso = "Date de la commande" → "20/03/2026 09:12"
+    const dateRaw =
+      row['Date de la commande'] ||
+      row["Date d'adhesion"] || row["Date d'adhésion"] ||
+      row['Date'] || row['date'] || '';
+
+    let dateAdhesion = new Date().toISOString().split('T')[0];
+    if (dateRaw) {
+      // Format "DD/MM/YYYY HH:MM" ou "DD/MM/YYYY"
+      const parts = dateRaw.trim().split(' ')[0].split('/');
+      if (parts.length === 3) {
+        dateAdhesion = parts[2] + '-' + parts[1].padStart(2, '0') + '-' + parts[0].padStart(2, '0');
+      } else {
+        dateAdhesion = dateRaw;
+      }
+    }
+
+    // Montant : format HelloAsso = "Montant tarif" → "20,00"
+    const montantStr =
+      row['Montant tarif'] || row['Montant'] || row['montant'] || row['Amount'] || '0';
     const montant = parseFloat(montantStr.replace(',', '.')) || undefined;
+
+    // Discord : colonne custom HelloAsso CyberV
+    const discord = row['Pseudo Discord'] || row['pseudo_discord'] || '';
 
     members.push({
       nom: nom.trim(),
@@ -74,6 +104,7 @@ function parseHelloAssoCSV(data: Record<string, string>[]): ParsedMember[] {
       telephone: telephone.trim() || undefined,
       dateAdhesion,
       montant,
+      discord: discord.trim() || undefined,
     });
   }
   return members;
@@ -114,6 +145,7 @@ function membersToImportPayload(
     telephone: m.telephone,
     estAJourCotisation: true,
     dateDerniereCotisation: m.dateAdhesion,
+    ...(m.discord ? { kpiDiscord: { idDiscord: m.discord, nombreActivites: 0, derniereActivite: undefined } } : {}),
   }));
 
   const fromUpdate = toUpdate.map(({ parsed }) => ({
@@ -124,6 +156,7 @@ function membersToImportPayload(
     telephone: parsed.telephone,
     estAJourCotisation: true,
     dateDerniereCotisation: parsed.dateAdhesion,
+    ...(parsed.discord ? { kpiDiscord: { idDiscord: parsed.discord, nombreActivites: 0, derniereActivite: undefined } } : {}),
   }));
 
   return [...fromCreate, ...fromUpdate];
@@ -224,7 +257,7 @@ export function HelloAssoImport({ persons, onImport }: HelloAssoImportProps) {
     <>
       <Card className="border border-border shadow-sm">
         <CardHeader className="bg-muted/50 border-b border-border">
-          <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+          <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
             <Users className="h-5 w-5" />
             Importer depuis HelloAsso
           </CardTitle>
@@ -321,7 +354,7 @@ export function HelloAssoImport({ persons, onImport }: HelloAssoImportProps) {
                   {/* Tableau des changements */}
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-muted/50 border-b border-gray-100">
+                      <tr className="bg-muted/50 border-b border-border">
                         <th className="text-left px-4 py-1.5 text-xs font-medium text-muted-foreground w-1/3">
                           Champ
                         </th>
