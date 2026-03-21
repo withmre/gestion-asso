@@ -228,7 +228,7 @@ export function BilanPage({
         <TabsContent value="actif" className="space-y-6 mt-6">
           <Card className="border border-border shadow-sm">
             <CardHeader className="bg-muted/50 border-b border-border">
-              <CardTitle className="text-lg font-semibold text-gray-800">Ajouter un actif</CardTitle>
+              <CardTitle className="text-lg font-semibold text-foreground">Ajouter un actif</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -283,7 +283,7 @@ export function BilanPage({
             actifsByType[type].length > 0 ? (
               <Card key={type} className="border border-border shadow-sm">
                 <CardHeader className="bg-muted/50 border-b border-border">
-                  <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                  <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
                     {(() => { const Icon = actifTypeIcons[type]; return <Icon className="h-5 w-5" />; })()}
                     {actifTypeLabels[type]}
                     <Badge variant="secondary">{actifsByType[type].length}</Badge>
@@ -323,7 +323,7 @@ export function BilanPage({
                                     <span className="text-xs text-muted-foreground whitespace-nowrap">{amort.tauxAmortissement}%</span>
                                   </div>
                                   {amort.estAmorti ? (
-                                    <span className="inline-block bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded font-medium">Amorti</span>
+                                    <span className="inline-block bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 text-xs px-2 py-0.5 rounded font-medium">Amorti</span>
                                   ) : actif.dureeAmortissement ? (
                                     <span className="text-xs text-muted-foreground/60">
                                       Sur {actif.dureeAmortissement} an{actif.dureeAmortissement > 1 ? 's' : ''}
@@ -365,7 +365,7 @@ export function BilanPage({
         <TabsContent value="passif" className="space-y-6 mt-6">
           <Card className="border border-border shadow-sm">
             <CardHeader className="bg-muted/50 border-b border-border">
-              <CardTitle className="text-lg font-semibold text-gray-800">Ajouter une dette</CardTitle>
+              <CardTitle className="text-lg font-semibold text-foreground">Ajouter une dette</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -396,7 +396,7 @@ export function BilanPage({
           {passifs.length > 0 && (
             <Card className="border border-border shadow-sm">
               <CardHeader className="bg-muted/50 border-b border-border">
-                <CardTitle className="text-lg font-semibold text-gray-800">Dettes enregistrees</CardTitle>
+                <CardTitle className="text-lg font-semibold text-foreground">Dettes enregistrees</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <Table>
