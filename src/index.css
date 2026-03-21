@@ -72,10 +72,31 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Empêche le scroll global, chaque zone gère son propre scroll */
+  html, body, #root {
+    height: 100%;
+    overflow: hidden;
+  }
 }
 
 @layer utilities {
-  .grid-cols-14 {
-    grid-template-columns: repeat(14, minmax(0, 1fr));
+  /* Scrollbar discrète sur la sidebar et le contenu principal */
+  .overflow-auto,
+  .overflow-y-auto {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  .overflow-auto::-webkit-scrollbar,
+  .overflow-y-auto::-webkit-scrollbar {
+    width: 4px;
+  }
+  .overflow-auto::-webkit-scrollbar-thumb,
+  .overflow-y-auto::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--border));
+    border-radius: 9999px;
+  }
+  .overflow-auto::-webkit-scrollbar-track,
+  .overflow-y-auto::-webkit-scrollbar-track {
+    background: transparent;
   }
 }
