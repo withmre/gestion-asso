@@ -165,7 +165,7 @@ export function Dashboard({ kpiPersonnes, kpiFinances, kpiCTF, kpiSubventions, s
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="border border-border shadow-sm">
             <CardHeader className="bg-muted/50 border-b border-border">
-              <CardTitle className="text-lg font-semibold text-gray-800">Répartition des revenus</CardTitle>
+              <CardTitle className="text-lg font-semibold text-foreground">Répartition des revenus</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
               {repartitionData.length > 0 ? (
@@ -188,7 +188,7 @@ export function Dashboard({ kpiPersonnes, kpiFinances, kpiCTF, kpiSubventions, s
 
           <Card className="border border-border shadow-sm">
             <CardHeader className="bg-muted/50 border-b border-border">
-              <CardTitle className="text-lg font-semibold text-gray-800">Répartition des dépenses</CardTitle>
+              <CardTitle className="text-lg font-semibold text-foreground">Répartition des dépenses</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
               {depensesData.length > 0 ? (
@@ -213,7 +213,7 @@ export function Dashboard({ kpiPersonnes, kpiFinances, kpiCTF, kpiSubventions, s
         {/* Évolution mensuelle - 3 courbes */}
         <Card className="border border-border shadow-sm">
           <CardHeader className="bg-muted/50 border-b border-border">
-            <CardTitle className="text-lg font-semibold text-gray-800">Évolution mensuelle</CardTitle>
+            <CardTitle className="text-lg font-semibold text-foreground">Évolution mensuelle</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
             <ResponsiveContainer width="100%" height={300}>
@@ -234,7 +234,7 @@ export function Dashboard({ kpiPersonnes, kpiFinances, kpiCTF, kpiSubventions, s
         {/* Top 5 membres actifs */}
         <Card className="border border-border shadow-sm">
           <CardHeader className="bg-muted/50 border-b border-border">
-            <CardTitle className="text-lg font-semibold text-gray-800">Top 5 membres les plus actifs</CardTitle>
+            <CardTitle className="text-lg font-semibold text-foreground">Top 5 membres les plus actifs</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
             {kpiPersonnes.top5MembresActifs.length > 0 ? (
