@@ -18,9 +18,9 @@ interface PartenairesPageProps {
 }
 
 const typesPartenaire: { value: PartenaireType; label: string; color: string }[] = [
-  { value: 'technique', label: 'Technique', color: 'bg-blue-100 text-blue-700' },
-  { value: 'financier', label: 'Financier', color: 'bg-green-100 text-green-700' },
-  { value: 'media', label: 'Média', color: 'bg-purple-100 text-purple-700' },
+  { value: 'technique', label: 'Technique', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' },
+  { value: 'financier', label: 'Financier', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' },
+  { value: 'media', label: 'Média', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' },
   { value: 'autre', label: 'Autre', color: 'bg-muted text-foreground' }
 ];
 
@@ -114,7 +114,7 @@ export function PartenairesPage({ partenaires, onAdd, onUpdate, onDelete }: Part
       <Card className="border border-border shadow-sm">
         <CardHeader className="bg-muted/50 border-b border-border">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
               <Handshake className="h-5 w-5 text-indigo-500" />
               Partenaires & Sponsors ({partenaires.length})
             </CardTitle>
