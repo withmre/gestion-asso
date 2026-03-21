@@ -21,9 +21,9 @@ interface SubventionsPageProps {
 
 const statuts: { value: SubventionStatut; label: string; color: string }[] = [
   { value: 'a_deposer', label: 'À déposer', color: 'bg-muted text-foreground' },
-  { value: 'en_cours', label: 'En cours', color: 'bg-amber-100 text-amber-700' },
-  { value: 'obtenue', label: 'Obtenue', color: 'bg-green-100 text-green-700' },
-  { value: 'refusee', label: 'Refusée', color: 'bg-red-100 text-red-700' }
+  { value: 'en_cours', label: 'En cours', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' },
+  { value: 'obtenue', label: 'Obtenue', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' },
+  { value: 'refusee', label: 'Refusée', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' }
 ];
 
 export function SubventionsPage({ subventions, onAdd, onUpdate, onDelete, onExportExcel }: SubventionsPageProps) {
@@ -107,7 +107,7 @@ export function SubventionsPage({ subventions, onAdd, onUpdate, onDelete, onExpo
       <Card className="border border-border shadow-sm">
         <CardHeader className="bg-muted/50 border-b border-border">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
               <FileText className="h-5 w-5 text-blue-500" />
               Subventions & Financements ({subventions.length})
             </CardTitle>
