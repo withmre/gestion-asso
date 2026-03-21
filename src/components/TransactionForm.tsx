@@ -155,7 +155,7 @@ export function TransactionForm({ persons, onSubmit }: TransactionFormProps) {
   return (
     <Card className="border border-border shadow-sm">
       <CardHeader className="bg-muted/50 border-b border-border">
-        <CardTitle className="text-lg font-semibold text-gray-800">Nouvelle Transaction</CardTitle>
+        <CardTitle className="text-lg font-semibold text-foreground">Nouvelle Transaction</CardTitle>
       </CardHeader>
       <CardContent className="pt-6">
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TransactionType)}>
