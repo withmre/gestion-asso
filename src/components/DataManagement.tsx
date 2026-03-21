@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Download, Upload, FileSpreadsheet, AlertTriangle, Building2, Calendar, Lock, ShieldAlert, ShieldCheck } from 'lucide-react';
+import { Download, Upload, FileSpreadsheet, AlertTriangle, Building2, Calendar, Lock, ShieldAlert, ShieldCheck, Trash2 } from 'lucide-react';
 import type { AssociationParams, TypeAdhesion } from '@/types';
 import { PinSetup } from './PinLock';
 
@@ -77,6 +77,7 @@ export function DataManagement({ params, onUpdateParams, onExportJSON, onImportJ
   const [selectedAnnualYear, setSelectedAnnualYear] = useState(currentYear.toString());
   const [importError, setImportError] = useState<string | null>(null);
   const [importSuccess, setImportSuccess] = useState(false);
+  const [clearDataOpen, setClearDataOpen] = useState(false);
   const [mdpChiffrement, setMdpChiffrement] = useState('');
   const [mdpDechiffrement, setMdpDechiffrement] = useState('');
   const [erreurDechiffrement, setErreurDechiffrement] = useState<string | null>(null);
@@ -442,6 +443,64 @@ export function DataManagement({ params, onUpdateParams, onExportJSON, onImportJ
               </TabsContent>
             </Tabs>
           </div>
+        </CardContent>
+      </Card>
+      {/* ── Effacer les données ───────────────────────────────────────── */}
+      <Card className="border border-destructive/40 shadow-sm">
+        <CardHeader className="bg-destructive/5 border-b border-destructive/20">
+          <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <Trash2 className="h-5 w-5 text-destructive" />
+            Zone de danger
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-6 space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Supprime toutes les données de l'application (personnes, transactions, activités, paramètres…).
+            Cette action est irréversible. Exportez une sauvegarde avant de continuer.
+          </p>
+          <Dialog open={clearDataOpen} onOpenChange={setClearDataOpen}>
+            <DialogTrigger asChild>
+              <Button variant="destructive" className="w-full">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Effacer toutes les données
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-destructive">
+                  <AlertTriangle className="h-5 w-5" />
+                  Confirmer la suppression
+                </DialogTitle>
+                <DialogDescription>
+                  Toutes vos données seront définitivement supprimées du navigateur.
+                  Cette action ne peut pas être annulée.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col gap-3 pt-2">
+                <p className="text-sm font-medium text-foreground">
+                  Voulez-vous vraiment tout effacer ?
+                </p>
+                <div className="flex gap-3 justify-end">
+                  <Button variant="outline" onClick={() => setClearDataOpen(false)}>
+                    Annuler
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      localStorage.removeItem('association_comptabilite_data_v3');
+                      localStorage.removeItem('association_warning_shown_v3');
+                      localStorage.removeItem('onboarding_done');
+                      setClearDataOpen(false);
+                      window.location.reload();
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Oui, tout supprimer
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
     </div>
