@@ -39,10 +39,10 @@ const depenseLabels: Record<DepenseCategorie, string> = {
 };
 
 const typeColors: Record<TransactionType, string> = {
-  adhesion: 'bg-blue-100 text-blue-800',
-  don: 'bg-green-100 text-green-800',
-  vente: 'bg-amber-100 text-amber-800',
-  depense: 'bg-red-100 text-red-800',
+  adhesion: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+  don: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+  vente: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300',
+  depense: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
 };
 
 export function TransactionList({ transactions, persons, onDelete, onEdit }: TransactionListProps) {
@@ -103,7 +103,7 @@ export function TransactionList({ transactions, persons, onDelete, onEdit }: Tra
       <CardHeader className="bg-muted/50 border-b border-border">
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
               <Receipt className="h-5 w-5" />
               Liste des transactions ({transactions.length})
             </CardTitle>
